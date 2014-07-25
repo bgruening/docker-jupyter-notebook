@@ -5,7 +5,11 @@ MAINTAINER Bjoern Gruening <bjoern.gruening@gmail.com>
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y libzmq1 libzmq-dev python-dev libc-dev pandoc python-pip
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y build-essential
+RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y libfreetype6-dev libpng-dev net-tools
 RUN pip install pyzmq ipython jinja2 tornado pygments
+RUN pip install distribute --upgrade
+RUN pip install numpy biopython scikit-learn pandas sklearn-pandas bioblend matplotlib
+RUN pip install pysam khmer dendropy
 RUN DEBIAN_FRONTEND=noninteractive apt-get remove -y --purge libzmq-dev python-dev libc-dev build-essential binutils
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
 RUN DEBIAN_FRONTEND=noninteractive apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
