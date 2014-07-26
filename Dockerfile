@@ -8,7 +8,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y bu
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y libfreetype6-dev libpng-dev net-tools procps cron
 RUN pip install pyzmq ipython jinja2 tornado pygments
 RUN pip install distribute --upgrade
-RUN pip install numpy biopython scikit-learn pandas sklearn-pandas bioblend matplotlib
+RUN pip install numpy biopython scikit-learn pandas scipy sklearn-pandas bioblend matplotlib
 RUN pip install pysam khmer dendropy
 RUN DEBIAN_FRONTEND=noninteractive apt-get remove -y --purge libzmq-dev python-dev libc-dev build-essential binutils
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
