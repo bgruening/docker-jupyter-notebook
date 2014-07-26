@@ -14,7 +14,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get remove -y --purge libzmq-dev python-d
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
 RUN DEBIAN_FRONTEND=noninteractive apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-
 ADD ./monitor_traffic.sh /monitor_traffic.sh
 RUN chmod +x /monitor_traffic.sh
 RUN echo "* *     * * *   root    /monitor_traffic.sh" >> /etc/crontab
