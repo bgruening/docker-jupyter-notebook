@@ -24,9 +24,17 @@ RUN mkdir /import
 VOLUME ["/import/"]
 WORKDIR /import/
 
+# Add python module to a special folder for modules we want to be able to load within IPython
 RUN mkdir /py/
 ADD ./galaxy.py /py/galaxy.py
+# Make sure the system is aware that it can look for python code here
 ENV PYTHONPATH /py/
+
+# We can get away with just creating this single file and IPython will create the rest of the
+# profile for us.
+RUN mkdir -p /.ipython/profile_default/startup/
+# These imports are done for every open IPython console
+ADD ./ipython-profile.py /.ipython/profile_default/startup/00-load.py
 
 ADD ./startup.sh /startup.sh
 RUN chmod +x /startup.sh
