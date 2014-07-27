@@ -3,7 +3,12 @@ from bioblend.galaxy.tools import ToolClient
 from bioblend.galaxy.histories import HistoryClient
 import yaml
 
-def export(filename):
+def put(filename):
+    """
+        Given a filename of any file accessible to the docker instance, this
+        function will upload that file to galaxy using the current history.
+        Does not return anything.
+    """
     with open('conf.yaml', 'rb') as handle:
         conf = yaml.load(handle)
     gi = galaxy.GalaxyInstance(url=conf['galaxy_url'], key=conf['api_key'])
@@ -11,7 +16,7 @@ def export(filename):
     tc.upload_file(filename, conf['history_id'])
 
 
-def import( dataset_id ):
+def get( dataset_id ):
     """
         Given the history_id that is displayed to the user, this function will
         download the file from the history and stores it under /import/

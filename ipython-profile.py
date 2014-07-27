@@ -1,1 +1,1 @@
-from galaxy import load, export
+from galaxy import get, put
