@@ -24,8 +24,9 @@ RUN mkdir /import
 VOLUME ["/import/"]
 WORKDIR /import/
 
-RUN mkdir -p /.ipython/
-RUN ln -s /import/profile_galaxy/ /.ipython/profile_galaxy
+RUN mkdir /py/
+ADD ./galaxy.py /py/galaxy.py
+ENV PYTHONPATH /py/
 
 ADD ./startup.sh /startup.sh
 RUN chmod +x /startup.sh
