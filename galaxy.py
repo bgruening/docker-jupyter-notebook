@@ -2,6 +2,60 @@ from bioblend import galaxy
 from bioblend.galaxy.tools import ToolClient
 from bioblend.galaxy.histories import HistoryClient
 import yaml
+import subprocess
+
+def get_galaxy_connection(conf):
+    """
+        Given access to the configuration dict that galaxy passed us, we try and connect to galaxy's API.
+
+        First we try connecting to galaxy directly, using an IP address given
+        us by docker (since the galaxy host is the default gateway for docker).
+        Using additional information collected by galaxy like the port it is
+        running on and the application path, we build a galaxy URL and test our
+        connection by attempting to get a history listing. This is done to
+        avoid any nasty network configuration that a SysAdmin has placed
+        between galaxy and us inside docker, like disabling API queries.
+
+        If that fails, we failover to using the URL the user is accessing
+        through. This will succeed where the previous connection fails under
+        the conditions of REMOTE_USER and galaxy running under uWSGI.
+    """
+    try:
+        # Remove trailing slashes
+        app_path = conf['galaxy_url'].rstrip('/')
+        # Remove protocol+host:port if included
+        app_path = ''.join(app_path.split('/')[3:])
+
+        # Now obtain IP address from a netstat command.
+
+        cmd_netstat = ['netstat','-nr']
+        p1 = subprocess.Popen(cmd_netstat, stdout=subprocess.PIPE)
+        cmd_grep = ['grep', '^0\.0\.0\.0']
+        p2 = subprocess.Popen(cmd_grep, stdin=p1.stdout, stdout=subprocess.PIPE)
+        cmd_awk = ['awk', '{ print $2 }']
+        p3 = subprocess.Popen(cmd_awk, stdin=p2.stdout, stdout=subprocess.PIPE)
+        # Now we have an ip address to connect to galaxy on.
+        galaxy_ip = p3.stdout.read()
+        # We should be able to find a port to connect to galaxy on via this
+        # conf var: galaxy_paster_port
+        galaxy_port = conf['galaxy_paster_port']
+
+        if len(galaxy_port) == 0:
+            # We've failed to detect a port in the config we were given by
+            # galaxy, so we won't be able to construct a valid URL
+            raise Exception("No port")
+
+        built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port.strip(), app_path.strip())
+
+        gi = galaxy.GalaxyInstance(url=built_galaxy_url, key=conf['api_key'])
+        gi.histories.get_histories()
+    except:
+        try:
+            gi = galaxy.GalaxyInstance(url=conf['galaxy_url'], key=conf['api_key'])
+            gi.histories.get_histories()
+        except:
+            raise Exception("Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error")
+    return gi
 
 def put(filename):
     """
@@ -11,7 +65,8 @@ def put(filename):
     """
     with open('conf.yaml', 'rb') as handle:
         conf = yaml.load(handle)
-    gi = galaxy.GalaxyInstance(url=conf['galaxy_url'], key=conf['api_key'])
+
+    gi = get_galaxy_connection(conf)
     tc = ToolClient( gi )
     tc.upload_file(filename, conf['history_id'])
 
@@ -25,7 +80,7 @@ def get( dataset_id ):
     with open('conf.yaml', 'rb') as handle:
         conf = yaml.load(handle)
 
-    gi = galaxy.GalaxyInstance(url=conf['galaxy_url'], key=conf['api_key'])
+    gi = get_galaxy_connection(conf)
     hc = HistoryClient( gi )
 
     file_path = '/import/%s' % dataset_id
