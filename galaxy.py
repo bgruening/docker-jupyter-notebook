@@ -40,12 +40,12 @@ def get_galaxy_connection(conf):
         # conf var: galaxy_paster_port
         galaxy_port = conf['galaxy_paster_port']
 
-        if len(galaxy_port) == 0:
+        if not galaxy_port:
             # We've failed to detect a port in the config we were given by
             # galaxy, so we won't be able to construct a valid URL
             raise Exception("No port")
 
-        built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port.strip(), app_path.strip())
+        built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port, app_path.strip())
 
         gi = galaxy.GalaxyInstance(url=built_galaxy_url, key=conf['api_key'])
         gi.histories.get_histories()
