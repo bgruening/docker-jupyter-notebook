@@ -49,7 +49,21 @@
  */
 
 $([IPython.events]).on('app_initialized.NotebookApp', function(){
-  //...
-  require(['/static/custom/save_to_galaxy.js'])
+    // Create callback
+    var saveToGalaxy = function(){
+        var kernel = IPython.notebook.kernel;
+        var name = IPython.notebook.notebook_name;
+        command = 'put("ipython_galaxy_notebook.ipynb", "ipynb")';
+        kernel.execute(command);
+    };
+    // Register button group
+    IPython.toolbar.add_buttons_group([
+        {
+            id : 'saveToGalaxy',
+            label : 'Save the current notebook in Galaxy',
+            icon : 'icon-download-alt',
+            callback : saveToGalaxy
+        }
+    ]);
 });
 
