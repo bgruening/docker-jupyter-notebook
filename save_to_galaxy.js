@@ -5,7 +5,7 @@ var save_to_galaxy_extension = (function() {
     saveToGalaxy = function(){
         var kernel = IPython.notebook.kernel;
         var name = IPython.notebook.notebook_name;
-        command = 'put("ipython_galaxy_notebook.ipynb")';
+        command = 'put("ipython_galaxy_notebook.ipynb", "ipynb")';
         kernel.execute(command);
     };
 
