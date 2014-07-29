@@ -31,7 +31,6 @@ def get_galaxy_connection( ):
         app_path = conf['galaxy_url'].rstrip('/')
         # Remove protocol+host:port if included
         app_path = ''.join(app_path.split('/')[3:])
-
         # Now obtain IP address from a netstat command.
 
         cmd_netstat = ['netstat','-nr']
@@ -52,8 +51,7 @@ def get_galaxy_connection( ):
             raise Exception("No port")
 
         built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port, app_path.strip())
-
-        gi = galaxy.GalaxyInstance(url=built_galaxy_url, key=conf['api_key'])
+        gi = galaxy.GalaxyInstance(url=built_galaxy_url.rstrip('/'), key=conf['api_key'])
         gi.histories.get_histories()
     except:
         try:
