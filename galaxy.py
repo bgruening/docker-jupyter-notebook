@@ -4,7 +4,7 @@ from bioblend.galaxy.histories import HistoryClient
 import yaml
 import subprocess
 
-def get_galaxy_connection(conf):
+def get_galaxy_connection( conf ):
     """
         Given access to the configuration dict that galaxy passed us, we try and connect to galaxy's API.
 
@@ -57,7 +57,7 @@ def get_galaxy_connection(conf):
             raise Exception("Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error")
     return gi
 
-def put(filename):
+def put(filename, file_type = 'auto'):
     """
         Given a filename of any file accessible to the docker instance, this
         function will upload that file to galaxy using the current history.
@@ -68,7 +68,7 @@ def put(filename):
 
     gi = get_galaxy_connection(conf)
     tc = ToolClient( gi )
-    tc.upload_file(filename, conf['history_id'])
+    tc.upload_file(filename, conf['history_id'], file_type = file_type)
 
 
 def get( dataset_id ):
@@ -89,3 +89,4 @@ def get( dataset_id ):
     hc.download_dataset(conf['history_id'], dataset_mapping[dataset_id], file_path, use_default_filename=False, to_ext=None)
 
     return file_path
+
