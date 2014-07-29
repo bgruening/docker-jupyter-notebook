@@ -4,7 +4,12 @@ from bioblend.galaxy.histories import HistoryClient
 import yaml
 import subprocess
 
-def get_galaxy_connection( conf ):
+def _get_conf( config_file = 'conf.yaml' ):
+    with open(config_file, 'rb') as handle:
+        conf = yaml.load(handle)
+    return conf
+
+def get_galaxy_connection( ):
     """
         Given access to the configuration dict that galaxy passed us, we try and connect to galaxy's API.
 
@@ -20,6 +25,7 @@ def get_galaxy_connection( conf ):
         through. This will succeed where the previous connection fails under
         the conditions of REMOTE_USER and galaxy running under uWSGI.
     """
+    conf = _get_conf()
     try:
         # Remove trailing slashes
         app_path = conf['galaxy_url'].rstrip('/')
@@ -57,16 +63,15 @@ def get_galaxy_connection( conf ):
             raise Exception("Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error")
     return gi
 
+
 def put(filename, file_type = 'auto'):
     """
         Given a filename of any file accessible to the docker instance, this
         function will upload that file to galaxy using the current history.
         Does not return anything.
     """
-    with open('conf.yaml', 'rb') as handle:
-        conf = yaml.load(handle)
-
-    gi = get_galaxy_connection(conf)
+    conf = _get_conf()
+    gi = get_galaxy_connection()
     tc = ToolClient( gi )
     tc.upload_file(filename, conf['history_id'], file_type = file_type)
 
@@ -77,10 +82,8 @@ def get( dataset_id ):
         download the file from the history and stores it under /import/
         Return value is the path to the dataset stored under /import/
     """
-    with open('conf.yaml', 'rb') as handle:
-        conf = yaml.load(handle)
-
-    gi = get_galaxy_connection(conf)
+    conf = _get_conf()
+    gi = get_galaxy_connection()
     hc = HistoryClient( gi )
 
     file_path = '/import/%s' % dataset_id
