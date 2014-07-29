@@ -63,6 +63,9 @@ def get_galaxy_connection( ):
             raise Exception("Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error")
     return gi
 
+def _get_history_id():
+    conf = _get_conf()
+    return conf['history_id']
 
 def put(filename, file_type = 'auto'):
     """
