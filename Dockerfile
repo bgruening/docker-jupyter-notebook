@@ -39,7 +39,6 @@ ADD ./ipython-profile.py /.ipython/profile_default/startup/00-load.py
 ADD ./ipython_notebook_config.py /.ipython/profile_default/ipython_notebook_config.py
 ADD ./custom.js /.ipython/profile_default/static/custom/custom.js
 ADD ./custom.css /.ipython/profile_default/static/custom/custom.css
-ADD ./save_to_galaxy.js /.ipython/profile_default/static/custom/save_to_galaxy.js
 
 ADD ./startup.sh /startup.sh
 RUN chmod +x /startup.sh
