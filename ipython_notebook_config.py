@@ -5,6 +5,7 @@ c.NotebookApp.ip = '0.0.0.0'
 c.NotebookApp.port = 6789
 c.NotebookApp.open_browser = False
 c.NotebookApp.profile = u'default'
+c.IPKernelApp.matplotlib = 'inline'
 
 import os
 import yaml
