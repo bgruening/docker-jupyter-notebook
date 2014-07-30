@@ -11,9 +11,13 @@
 
 if [ `netstat -t | grep -v CLOSE_WAIT | grep ':6789' | wc -l` -lt 3 ]
 then
-    pkill ipython
-    # We will create new history elements with all data that is relevant,
-    # this means we can delete everything from /import/
-    rm /import/ -rf
+    if [ -e "/tmp/monitor_run" ];
+    then
+        pkill ipython
+        # We will create new history elements with all data that is relevant,
+        # this means we can delete everything from /import/
+        rm /import/ -rf
+    fi
 fi
 
+touch /tmp/monitor_run
