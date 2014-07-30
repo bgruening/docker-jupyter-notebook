@@ -11,11 +11,15 @@ Usage
 
 * Build your own image and run it
 
- [Docker](https://www.docker.com) is a pre-requirement for this project. You can build the container with the following command:
- ``docker build -t ipython-notebook . ``
+ [Docker](https://www.docker.com) is a pre-requirement for this project. You can build the container with:
+ ```bash
+  docker build -t ipython-notebook . 
+ ```
  The build process can take some time, but if finished you can run your container with:
- ``docker run -p 7777:6789 -v /home/user/foo/:/import/ -t ipython-notebook `` and you will have a running [IPython  
- Notebook](http://ipython.org/notebook.html) instance on ``http://localhost:7777``.
+ ```bash
+  docker run -p 7777:6789 -v /home/user/foo/:/import/ -t ipython-notebook
+ ```
+ and you will have a running [IPython Notebook](http://ipython.org/notebook.html) instance on ``http://localhost:7777``.
 
 * Run a pre-build image from docker registry
 
