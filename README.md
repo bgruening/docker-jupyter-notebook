@@ -19,7 +19,7 @@ Usage
  ```bash
   docker run -p 7777:6789 -v /home/user/foo/:/import/ -t ipython-notebook
  ```
- and you will have a running [IPython Notebook](http://ipython.org/notebook.html) instance on ``http://localhost:7777``.
+ and you will have a running [IPython Notebook](http://ipython.org/notebook.html) instance on ``http://localhost:7777/ipython/``.
 
 * Run a pre-build image from docker registry
 
