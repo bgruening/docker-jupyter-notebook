@@ -18,6 +18,8 @@ if os.path.exists( config_file_path ):
         conf = yaml.load(handle)
     c.NotebookApp.base_url = '/ipython/%d/' % conf['docker_port']
     c.NotebookApp.webapp_settings = {'static_url_prefix':'/ipython/%d/static/' % conf['docker_port']}
+    if 'notebook_password' in conf:
+        c.NotebookApp.password = conf['notebook_password']
 else:
     c.NotebookApp.base_url = '/ipython/'
     c.NotebookApp.webapp_settings = {'static_url_prefix':'/ipython/static/'}
