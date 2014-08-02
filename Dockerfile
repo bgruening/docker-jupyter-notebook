@@ -9,7 +9,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y li
 RUN pip install pyzmq ipython jinja2 tornado pygments
 RUN pip install distribute --upgrade
 RUN pip install numpy biopython scikit-learn pandas scipy sklearn-pandas bioblend matplotlib
-RUN pip install pysam khmer dendropy
+RUN pip install patsy
+RUN pip install pysam khmer dendropy ggplot mpld3
 RUN DEBIAN_FRONTEND=noninteractive apt-get remove -y --purge libzmq-dev python-dev libc-dev build-essential binutils gfortran
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
 RUN DEBIAN_FRONTEND=noninteractive apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
