@@ -41,6 +41,9 @@ ADD ./ipython_notebook_config.py /.ipython/profile_default/ipython_notebook_conf
 ADD ./custom.js /.ipython/profile_default/static/custom/custom.js
 ADD ./custom.css /.ipython/profile_default/static/custom/custom.css
 
+# Install MathJax locally because it has some problems with https as reported here: https://github.com/bgruening/galaxy-ipython/pull/8
+RUN python -c 'from IPython.external import mathjax; mathjax.install_mathjax("2.4.0")'
+
 ADD ./startup.sh /startup.sh
 RUN chmod +x /startup.sh
 
