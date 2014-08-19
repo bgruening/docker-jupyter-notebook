@@ -86,11 +86,14 @@ def get( dataset_id ):
     conf = _get_conf()
     gi = get_galaxy_connection()
     hc = HistoryClient( gi )
+    dc = DatasetClient( gi )
 
     file_path = '/import/%s' % dataset_id
 
     dataset_mapping = dict( [(dataset['hid'], dataset['id']) for dataset in hc.show_history(conf['history_id'], contents=True)] )
-    hc.download_dataset(conf['history_id'], dataset_mapping[dataset_id], file_path, use_default_filename=False, to_ext=None)
+    try:
+        hc.download_dataset(conf['history_id'], dataset_mapping[dataset_id], file_path, use_default_filename=False, to_ext=None)
+    except:
+        dc.download_dataset(dataset_mapping[dataset_id], file_path, use_default_filename=False)
 
     return file_path
-
