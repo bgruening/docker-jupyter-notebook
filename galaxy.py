@@ -1,6 +1,7 @@
 from bioblend import galaxy
 from bioblend.galaxy.tools import ToolClient
 from bioblend.galaxy.histories import HistoryClient
+from bioblend.galaxy.datasets import DatasetClient
 import yaml
 import subprocess
 
