@@ -10,6 +10,12 @@ c.IPKernelApp.matplotlib = 'inline'
 import os
 import yaml
 
+headers = {
+    'X-Frame-Options': 'ALLOWALL',
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Origin': '*'
+}
+
 config_file_path = '/import/conf.yaml'
 # In case this Notebook was launched from Galaxy a config file exists in /import/
 # For standalone usage we fall back to a port-less URL
@@ -21,6 +27,9 @@ if os.path.exists( config_file_path ):
 
     if 'notebook_password' in conf:
         c.NotebookApp.password = conf['notebook_password']
+
+    if 'cors_origin' in conf:
+        headers['Access-Control-Allow-Origin'] = conf['cors_origin']
 else:
     c.NotebookApp.base_url = '/ipython/'
     c.NotebookApp.webapp_settings = {'static_url_prefix':'/ipython/static/'}
@@ -28,8 +37,6 @@ else:
 
 # Allow the frame to be displayed within Galaxy by disabling X-Frame-Options
 #c.NotebookApp.webapp_settings = {'headers': {'X-Frame-Options': 'ALLOW-FROM http://localhost:8080'}}
-c.NotebookApp.webapp_settings['headers'] = {'X-Frame-Options': 'ALLOWALL', 
-                                            'Access-Control-Allow-Credentials': 'true', 
-                                            'Access-Control-Allow-Origin': 'http://localhost:8080'}
+c.NotebookApp.webapp_settings['headers'] = headers
 
 
