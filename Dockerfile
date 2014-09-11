@@ -25,14 +25,14 @@ RUN mkdir /import
 VOLUME ["/import/"]
 WORKDIR /import/
 
-# Install MathJax locally because it has some problems with https as reported here: https://github.com/bgruening/galaxy-ipython/pull/8
-RUN python -c 'from IPython.external import mathjax; mathjax.install_mathjax("2.4.0")'
-
 # Add python module to a special folder for modules we want to be able to load within IPython
 RUN mkdir /py/
 ADD ./galaxy.py /py/galaxy.py
 # Make sure the system is aware that it can look for python code here
 ENV PYTHONPATH /py/
+
+# Install MathJax locally because it has some problems with https as reported here: https://github.com/bgruening/galaxy-ipython/pull/8
+RUN python -c 'from IPython.external import mathjax; mathjax.install_mathjax("2.4.0")'
 
 # We can get away with just creating this single file and IPython will create the rest of the
 # profile for us.
@@ -43,7 +43,6 @@ ADD ./ipython-profile.py /.ipython/profile_default/startup/00-load.py
 ADD ./ipython_notebook_config.py /.ipython/profile_default/ipython_notebook_config.py
 ADD ./custom.js /.ipython/profile_default/static/custom/custom.js
 ADD ./custom.css /.ipython/profile_default/static/custom/custom.css
-
 
 ADD ./startup.sh /startup.sh
 RUN chmod +x /startup.sh

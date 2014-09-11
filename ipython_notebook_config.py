@@ -6,8 +6,6 @@ c.NotebookApp.port = 6789
 c.NotebookApp.open_browser = False
 c.NotebookApp.profile = u'default'
 c.IPKernelApp.matplotlib = 'inline'
-# This is needed for Cross-Origin Resource Sharing
-c.NotebookApp.allow_origin = '*'
 
 import os
 import yaml
@@ -30,6 +28,8 @@ else:
 
 # Allow the frame to be displayed within Galaxy by disabling X-Frame-Options
 #c.NotebookApp.webapp_settings = {'headers': {'X-Frame-Options': 'ALLOW-FROM http://localhost:8080'}}
-c.NotebookApp.webapp_settings['headers'] = {'X-Frame-Options': 'ALLOWALL'}
+c.NotebookApp.webapp_settings['headers'] = {'X-Frame-Options': 'ALLOWALL', 
+                                            'Access-Control-Allow-Credentials': 'true', 
+                                            'Access-Control-Allow-Origin': 'http://localhost:8080'}
 
 
