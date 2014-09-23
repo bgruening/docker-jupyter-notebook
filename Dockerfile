@@ -6,7 +6,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y libzmq1 libzmq-dev python-dev libc-dev pandoc python-pip
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y build-essential libblas-dev liblapack-dev gfortran
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y libfreetype6-dev libpng-dev net-tools procps cron
-RUN pip install pyzmq ipython jinja2 tornado pygments
+RUN pip install pyzmq ipython==2.2 jinja2 tornado pygments
 RUN pip install distribute --upgrade
 RUN pip install numpy biopython scikit-learn pandas scipy sklearn-pandas bioblend matplotlib
 RUN pip install patsy
