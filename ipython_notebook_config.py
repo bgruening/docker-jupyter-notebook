@@ -12,9 +12,9 @@ import yaml
 
 headers = {
     'X-Frame-Options': 'ALLOWALL',
-    'Access-Control-Allow-Credentials': 'true',
-    'Access-Control-Allow-Origin': '*'
 }
+c.NotebookApp.allow_origin = '*'
+c.NotebookApp.allow_credentials = True
 
 config_file_path = '/import/conf.yaml'
 # In case this Notebook was launched from Galaxy a config file exists in /import/
@@ -29,14 +29,9 @@ if os.path.exists( config_file_path ):
         c.NotebookApp.password = conf['notebook_password']
 
     if 'cors_origin' in conf:
-        headers['Access-Control-Allow-Origin'] = conf['cors_origin']
+        c.NotebookApp.allow_origin = conf['cors_origin']
 else:
     c.NotebookApp.base_url = '/ipython/'
     c.NotebookApp.webapp_settings = {'static_url_prefix':'/ipython/static/'}
 
-
-# Allow the frame to be displayed within Galaxy by disabling X-Frame-Options
-#c.NotebookApp.webapp_settings = {'headers': {'X-Frame-Options': 'ALLOW-FROM http://localhost:8080'}}
 c.NotebookApp.webapp_settings['headers'] = headers
-
-
