@@ -4,6 +4,7 @@ from bioblend.galaxy.histories import HistoryClient
 from bioblend.galaxy.datasets import DatasetClient
 import yaml
 import subprocess
+import sys
 
 def _get_conf( config_file = 'conf.yaml' ):
     with open(config_file, 'rb') as handle:
@@ -98,3 +99,22 @@ def get( dataset_id ):
         dc.download_dataset(dataset_mapping[dataset_id], file_path, use_default_filename=False)
 
     return file_path
+
+if __name__ == '__main__':
+    if len(sys.argv) == 3:
+        method, arg = sys.argv[1:3]
+        second_arg = None
+    elif len(sys.argv) == 4:
+        method, arg, second_arg = sys.argv[1:4]
+    else:
+        raise Exception("Wrong number of arguments")
+
+    if method == 'get':
+        get(arg)
+    elif method == 'put':
+        if second_arg is not None:
+            put(arg, file_type=second_arg)
+        else:
+            put(arg)
+    else:
+        raise Exception("Unknown method")
