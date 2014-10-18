@@ -6,11 +6,14 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y libzmq1 libzmq-dev python-dev libc-dev pandoc python-pip
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y build-essential libblas-dev liblapack-dev gfortran
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y libfreetype6-dev libpng-dev net-tools procps cron
+RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y r-base
 RUN pip install pyzmq ipython==2.2 jinja2 tornado pygments
 RUN pip install distribute --upgrade
 RUN pip install numpy biopython scikit-learn pandas scipy sklearn-pandas bioblend matplotlib
 RUN pip install patsy
 RUN pip install pysam khmer dendropy ggplot mpld3 sympy
+RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y libreadline-dev
+RUN pip install rpy2
 RUN DEBIAN_FRONTEND=noninteractive apt-get remove -y --purge libzmq-dev python-dev libc-dev build-essential binutils gfortran
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
 RUN DEBIAN_FRONTEND=noninteractive apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
