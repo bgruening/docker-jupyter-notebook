@@ -1,5 +1,5 @@
 #!/bin/bash
 
 ipython trust /import/ipython_galaxy_notebook.ipynb
-/cron.sh &
+/monitor_traffic.sh &
 ipython notebook

@@ -1,25 +1,23 @@
+# IPython container used by for Galaxy IPython
+#
+# VERSION       0.2.0
+
 FROM debian:wheezy
-MAINTAINER Bjoern Gruening <bjoern.gruening@gmail.com>
 
-# Install all requirements and clean up afterwards
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y libzmq1 libzmq-dev python-dev libc-dev pandoc python-pip
-RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y build-essential libblas-dev liblapack-dev gfortran
-RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y libfreetype6-dev libpng-dev net-tools procps
-RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y r-base
-RUN pip install pyzmq ipython==2.2 jinja2 tornado pygments
-RUN pip install distribute --upgrade
-RUN pip install numpy biopython scikit-learn pandas scipy sklearn-pandas bioblend matplotlib
-RUN pip install patsy
-RUN pip install pysam khmer dendropy ggplot mpld3 sympy
-RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y libreadline-dev
-RUN pip install rpy2
-RUN DEBIAN_FRONTEND=noninteractive apt-get remove -y --purge libzmq-dev python-dev libc-dev build-essential binutils gfortran
-RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
-RUN DEBIAN_FRONTEND=noninteractive apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
-# /import will be the universal mount-point for IPython
-# The Galaxy instance can copy in data that needs to be present to the IPython webserver
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get -qq update && apt-get install --no-install-recommends -y apt-transport-https \
+    libzmq1 libzmq-dev python-dev libc-dev pandoc python-pip \
+    build-essential libblas-dev liblapack-dev gfortran \
+    libfreetype6-dev libpng-dev net-tools procps \
+    r-base libreadline-dev && \
+    pip install distribute --upgrade && \
+    pip install pyzmq ipython==2.3 jinja2 tornado pygments numpy biopython scikit-learn pandas \
+        scipy sklearn-pandas bioblend matplotlib patsy pysam khmer dendropy ggplot mpld3 sympy rpy2 && \
+    apt-get remove -y --purge libzmq-dev python-dev libc-dev build-essential binutils gfortran libreadline-dev
+    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ADD ./startup.sh /startup.sh
 RUN chmod +x /startup.sh
@@ -27,15 +25,13 @@ RUN chmod +x /startup.sh
 ADD ./monitor_traffic.sh /monitor_traffic.sh
 RUN chmod +x /monitor_traffic.sh
 
-ADD ./cron.sh /cron.sh
-RUN chmod +x /cron.sh
-
-RUN mkdir /import && mkdir -p /home/ipyuser && groupadd -r ipyuser -g 500 && \
+# /import will be the universal mount-point for IPython
+# The Galaxy instance can copy in data that needs to be present to the IPython webserver
+    RUN mkdir /import && mkdir -p /home/ipyuser && groupadd -r ipyuser -g 500 && \
     useradd -u 1000 -r -g ipyuser -d /home/ipyuser -s /sbin/nologin ipyuser && \
     chown -R ipyuser:ipyuser /home/ipyuser && \
     chown -R ipyuser:ipyuser /import && \
-    chown -R ipyuser:ipyuser /monitor_traffic.sh && \
-    chown -R ipyuser:ipyuser /cron.sh
+    chown -R ipyuser:ipyuser /monitor_traffic.sh
 
 USER ipyuser
 
@@ -47,7 +43,6 @@ RUN python -c 'from IPython.external import mathjax; mathjax.install_mathjax("2.
 RUN mkdir -p /home/ipyuser/.ipython/profile_default/startup/
 RUN mkdir -p /home/ipyuser/.ipython/profile_default/static/custom/
 
-# These imports are done for every open IPython console
 ADD ./ipython-profile.py /home/ipyuser/.ipython/profile_default/startup/00-load.py
 ADD ./ipython_notebook_config.py /home/ipyuser/.ipython/profile_default/ipython_notebook_config.py
 ADD ./custom.js /home/ipyuser/.ipython/profile_default/static/custom/custom.js
