@@ -1,4 +1,4 @@
-# IPython container used by for Galaxy IPython
+# IPython container used for Galaxy IPython Integration
 #
 # VERSION       0.2.0
 
