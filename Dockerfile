@@ -27,26 +27,24 @@ RUN chmod +x /monitor_traffic.sh
 
 # /import will be the universal mount-point for IPython
 # The Galaxy instance can copy in data that needs to be present to the IPython webserver
-    RUN mkdir /import && mkdir -p /home/ipyuser && groupadd -r ipyuser -g 500 && \
-    useradd -u 1000 -r -g ipyuser -d /home/ipyuser -s /sbin/nologin ipyuser && \
-    chown -R ipyuser:ipyuser /home/ipyuser && \
-    chown -R ipyuser:ipyuser /import && \
-    chown -R ipyuser:ipyuser /monitor_traffic.sh
-
-USER ipyuser
+RUN mkdir /import 
 
 # Install MathJax locally because it has some problems with https as reported here: https://github.com/bgruening/galaxy-ipython/pull/8
 RUN python -c 'from IPython.external import mathjax; mathjax.install_mathjax("2.4.0")'
 
 # We can get away with just creating this single file and IPython will create the rest of the
 # profile for us.
-RUN mkdir -p /home/ipyuser/.ipython/profile_default/startup/
-RUN mkdir -p /home/ipyuser/.ipython/profile_default/static/custom/
+RUN mkdir -p /.ipython/profile_default/startup/
+RUN mkdir -p /.ipython/profile_default/static/custom/
 
-ADD ./ipython-profile.py /home/ipyuser/.ipython/profile_default/startup/00-load.py
-ADD ./ipython_notebook_config.py /home/ipyuser/.ipython/profile_default/ipython_notebook_config.py
-ADD ./custom.js /home/ipyuser/.ipython/profile_default/static/custom/custom.js
-ADD ./custom.css /home/ipyuser/.ipython/profile_default/static/custom/custom.css
+ADD ./ipython-profile.py /.ipython/profile_default/startup/00-load.py
+ADD ./ipython_notebook_config.py /.ipython/profile_default/ipython_notebook_config.py
+ADD ./custom.js /.ipython/profile_default/static/custom/custom.js
+ADD ./custom.css /.ipython/profile_default/static/custom/custom.css
+RUN chmod 777 -R /.ipython/
+
+# Drop privileges
+USER nobody
 
 VOLUME ["/import/"]
 WORKDIR /import/
