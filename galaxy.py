@@ -4,7 +4,7 @@ from bioblend.galaxy.histories import HistoryClient
 from bioblend.galaxy.datasets import DatasetClient
 import yaml
 import subprocess
-import sys
+import argparse
 
 def _get_conf( config_file = 'conf.yaml' ):
     with open(config_file, 'rb') as handle:
@@ -101,20 +101,16 @@ def get( dataset_id ):
     return file_path
 
 if __name__ == '__main__':
-    if len(sys.argv) == 3:
-        method, arg = sys.argv[1:3]
-        second_arg = None
-    elif len(sys.argv) == 4:
-        method, arg, second_arg = sys.argv[1:4]
-    else:
-        raise Exception("Wrong number of arguments")
+    parser = argparse.ArgumentParser(description='Connect to Galaxy through the API')
+    parser.add_argument('action',   help='Action to execute')
+    parser.add_argument('argument', help='File/ID number to Upload/Download, respectively')
+    parser.add_argument('file_type', nargs='?', help='File format to pass', default='auto')
+    args = parser.parse_args()
 
-    if method == 'get':
-        get(arg)
-    elif method == 'put':
-        if second_arg is not None:
-            put(arg, file_type=second_arg)
-        else:
-            put(arg)
+    if args.action == 'get':
+        # Ensure it's a numerical value
+        get(int(args.argument))
+    elif args.action == 'put':
+        put(args.argument, file_type=args.file_type)
     else:
-        raise Exception("Unknown method")
+        raise Exception("Unknown action")
