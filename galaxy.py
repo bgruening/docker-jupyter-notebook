@@ -102,7 +102,7 @@ def get( dataset_id ):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Connect to Galaxy through the API')
-    parser.add_argument('action',   help='Action to execute')
+    parser.add_argument('action',   help='Action to execute', choices=['get', 'put'])
     parser.add_argument('argument', help='File/ID number to Upload/Download, respectively')
     parser.add_argument('file_type', nargs='?', help='File format to pass', default='auto')
     args = parser.parse_args()
@@ -112,5 +112,3 @@ if __name__ == '__main__':
         get(int(args.argument))
     elif args.action == 'put':
         put(args.argument, file_type=args.file_type)
-    else:
-        raise Exception("Unknown action")
