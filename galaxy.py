@@ -4,6 +4,7 @@ from bioblend.galaxy.histories import HistoryClient
 from bioblend.galaxy.datasets import DatasetClient
 import yaml
 import subprocess
+import argparse
 
 def _get_conf( config_file = 'conf.yaml' ):
     with open(config_file, 'rb') as handle:
@@ -98,3 +99,16 @@ def get( dataset_id ):
         dc.download_dataset(dataset_mapping[dataset_id], file_path, use_default_filename=False)
 
     return file_path
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Connect to Galaxy through the API')
+    parser.add_argument('action',   help='Action to execute', choices=['get', 'put'])
+    parser.add_argument('argument', help='File/ID number to Upload/Download, respectively')
+    parser.add_argument('file_type', nargs='?', help='File format to pass', default='auto')
+    args = parser.parse_args()
+
+    if args.action == 'get':
+        # Ensure it's a numerical value
+        get(int(args.argument))
+    elif args.action == 'put':
+        put(args.argument, file_type=args.file_type)
