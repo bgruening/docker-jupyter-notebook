@@ -6,7 +6,7 @@ import yaml
 import subprocess
 import argparse
 
-def _get_conf( config_file = 'conf.yaml' ):
+def _get_conf( config_file = '/import/conf.yaml' ):
     with open(config_file, 'rb') as handle:
         conf = yaml.load(handle)
     return conf
