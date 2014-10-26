@@ -67,7 +67,7 @@ def _get_history_id():
     conf = _get_conf()
     return conf['history_id']
 
-def put(filename, file_type = 'auto'):
+def put( filename, file_type = 'auto', history_id = None ):
     """
         Given a filename of any file accessible to the docker instance, this
         function will upload that file to galaxy using the current history.
@@ -76,10 +76,11 @@ def put(filename, file_type = 'auto'):
     conf = _get_conf()
     gi = get_galaxy_connection()
     tc = ToolClient( gi )
-    tc.upload_file(filename, conf['history_id'], file_type = file_type)
+    history_id = history_id or _get_history_id()
+    tc.upload_file(filename, history_id, file_type = file_type)
 
 
-def get( dataset_id ):
+def get( dataset_id, history_id = None ):
     """
         Given the history_id that is displayed to the user, this function will
         download the file from the history and stores it under /import/
@@ -91,14 +92,15 @@ def get( dataset_id ):
     dc = DatasetClient( gi )
 
     file_path = '/import/%s' % dataset_id
+    history_id = history_id or _get_history_id()
 
     # Cache the file requests. E.g. in the example of someone doing something
     # silly like a get() for a Galaxy file in a for-loop, wouldn't want to
     # re-download every time and add that overhead.
     if not os.path.exists(file_path):
-        dataset_mapping = dict( [(dataset['hid'], dataset['id']) for dataset in hc.show_history(conf['history_id'], contents=True)] )
+        dataset_mapping = dict( [(dataset['hid'], dataset['id']) for dataset in hc.show_history( history_id, contents=True )] )
         try:
-            hc.download_dataset(conf['history_id'], dataset_mapping[dataset_id], file_path, use_default_filename=False, to_ext=None)
+            hc.download_dataset( history_id, dataset_mapping[dataset_id], file_path, use_default_filename=False, to_ext=None )
         except:
             dc.download_dataset(dataset_mapping[dataset_id], file_path, use_default_filename=False)
 
@@ -106,13 +108,15 @@ def get( dataset_id ):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Connect to Galaxy through the API')
-    parser.add_argument('action',   help='Action to execute', choices=['get', 'put'])
-    parser.add_argument('argument', help='File/ID number to Upload/Download, respectively')
-    parser.add_argument('file_type', nargs='?', help='File format to pass', default='auto')
+    parser.add_argument('--action',   help='Action to execute', choices=['get', 'put'])
+    parser.add_argument('--argument', help='File/ID number to Upload/Download, respectively')
+    parser.add_argument('--history-id', dest="history_id", default=None, 
+        help='History ID. The history ID and the dataset ID uniquly identify a dataset. Per default this is set to the current Galaxy history.')
+    parser.add_argument('-t', '--filetype', help='Galaxy file format. If not specified Galaxy will try to guess the filetype automatically.', default='auto')
     args = parser.parse_args()
 
     if args.action == 'get':
         # Ensure it's a numerical value
         get(int(args.argument))
     elif args.action == 'put':
-        put(args.argument, file_type=args.file_type)
+        put(args.argument, file_type=args.filetype)
