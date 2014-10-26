@@ -92,11 +92,15 @@ def get( dataset_id ):
 
     file_path = '/import/%s' % dataset_id
 
-    dataset_mapping = dict( [(dataset['hid'], dataset['id']) for dataset in hc.show_history(conf['history_id'], contents=True)] )
-    try:
-        hc.download_dataset(conf['history_id'], dataset_mapping[dataset_id], file_path, use_default_filename=False, to_ext=None)
-    except:
-        dc.download_dataset(dataset_mapping[dataset_id], file_path, use_default_filename=False)
+    # Cache the file requests. E.g. in the example of someone doing something
+    # silly like a get() for a Galaxy file in a for-loop, wouldn't want to
+    # re-download every time and add that overhead.
+    if not os.path.exists(file_path):
+        dataset_mapping = dict( [(dataset['hid'], dataset['id']) for dataset in hc.show_history(conf['history_id'], contents=True)] )
+        try:
+            hc.download_dataset(conf['history_id'], dataset_mapping[dataset_id], file_path, use_default_filename=False, to_ext=None)
+        except:
+            dc.download_dataset(dataset_mapping[dataset_id], file_path, use_default_filename=False)
 
     return file_path
 
