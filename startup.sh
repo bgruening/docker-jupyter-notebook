@@ -2,4 +2,4 @@
 
 ipython trust /import/ipython_galaxy_notebook.ipynb
 /monitor_traffic.sh &
-ipython notebook
+ipython notebook --no-browser
