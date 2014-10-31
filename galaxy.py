@@ -5,6 +5,7 @@ from bioblend.galaxy.datasets import DatasetClient
 import yaml
 import subprocess
 import argparse
+import os
 
 def _get_conf( config_file = '/import/conf.yaml' ):
     with open(config_file, 'rb') as handle:
