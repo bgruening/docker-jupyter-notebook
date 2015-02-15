@@ -52,7 +52,7 @@ ADD ./galaxy.py /py/galaxy.py
 ADD ./put /py/put
 ADD ./get /py/get
 # Make sure the system is aware that it can look for python code here
-ENV PYTHONPATH /py/:$PATHONPATH
+ENV PYTHONPATH /py/:$PYTHONPATH
 ENV PATH /py/:$PATH
 RUN chmod 777 -R /py/
 
