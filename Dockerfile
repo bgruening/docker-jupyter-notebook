@@ -1,8 +1,8 @@
 # IPython container used for Galaxy IPython Integration
 #
-# VERSION       0.2.0
+# VERSION       0.3.0
 
-FROM debian:wheezy
+FROM ubuntu:14.04
 
 MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
@@ -14,7 +14,7 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y apt-transpo
     libfreetype6-dev libpng-dev net-tools procps \
     r-base libreadline-dev && \
     pip install distribute --upgrade && \
-    pip install pyzmq ipython==2.3 jinja2 tornado pygments numpy biopython scikit-learn pandas \
+    pip install pyzmq ipython==2.4 jinja2 tornado pygments numpy biopython scikit-learn pandas \
         scipy sklearn-pandas bioblend matplotlib patsy pysam khmer dendropy ggplot mpld3 sympy rpy2 && \
     apt-get remove -y --purge libzmq-dev python-dev libc-dev build-essential binutils gfortran libreadline-dev && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
