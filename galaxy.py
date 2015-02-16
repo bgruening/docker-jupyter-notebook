@@ -62,7 +62,7 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
 
         built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port, app_path.strip())
         url = built_galaxy_url.rstrip('/')
-        key=conf['api_key']
+        key = conf['api_key']
         if use_objects:
             gi = objects.GalaxyInstance(url, key)
             gi.histories.get(history_id)
@@ -71,8 +71,8 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
             gi.histories.get_histories()
     except:
         try:
-            url=conf['galaxy_url']
-            key=conf['api_key']
+            url = conf['galaxy_url']
+            key = conf['api_key']
             if use_objects:
                 gi = objects.GalaxyInstance(url, key)
                 gi.histories.get(history_id)
@@ -84,8 +84,12 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
     return gi
 
 def _get_history_id():
+    """
+    Extract the history ID from the config file.
+    """
     conf = _get_conf()
     return conf['history_id']
+
 
 def put(filename, file_type = 'auto', history_id = None, use_objects=DEFAULT_USE_OBJECTS ):
     """
@@ -94,14 +98,13 @@ def put(filename, file_type = 'auto', history_id = None, use_objects=DEFAULT_USE
         Does not return anything.
     """
     conf = _get_conf()
-    gi = get_galaxy_connection(use_objects)
-    history_id = conf["history_id"]
+    gi = get_galaxy_connection( use_objects )
+    istory_id = history_id or _get_history_id()
     if use_objects:
-        history = gi.histories.get(history_id)
+        history = gi.histories.get( history_id )
         history.upload_dataset( filename, file_type=file_type )
     else:
         tc = ToolClient( gi )
-	history_id = history_id or _get_history_id()
         tc.upload_file(filename, history_id, file_type = file_type)
 
 
@@ -124,18 +127,18 @@ def get( dataset_id, history_id = None, use_objects=DEFAULT_USE_OBJECTS ):
     # re-download every time and add that overhead.
     if not os.path.exists(file_path):
         if use_objects:
-            history = gi.histories.get(history_id)
-            datasets = dict([(d.wrapped["hid"], d.id) for d in history.get_datasets()])
-            dataset = history.get_dataset(datasets[dataset_id])
-            dataset.download(open(file_path, 'wb'))
+            history = gi.histories.get( history_id )
+            datasets = dict([ ( d.wrapped["hid"], d.id ) for d in history.get_datasets() ])
+            dataset = history.get_dataset( datasets[dataset_id] )
+            dataset.download( open(file_path, 'wb') )
         else:
             hc = HistoryClient( gi )
             dc = DatasetClient( gi )
-            dataset_mapping = dict( [(dataset['hid'], dataset['id']) for dataset in hc.show_history(history_id, contents=True)] )
+            dataset_mapping = dict( [(dataset['hid'], dataset['id']) for dataset in hc.show_history( history_id, contents=True)] )
             try:
-                hc.download_dataset(history_id, dataset_mapping[dataset_id], file_path, use_default_filename=False, to_ext=None)
+                hc.download_dataset( history_id, dataset_mapping[dataset_id], file_path, use_default_filename=False, to_ext=None )
             except:
-                dc.download_dataset(dataset_mapping[dataset_id], file_path, use_default_filename=False)
+                dc.download_dataset( dataset_mapping[dataset_id], file_path, use_default_filename=False )
 
     return file_path
 
