@@ -9,7 +9,7 @@ MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get -qq update && apt-get install --no-install-recommends -y apt-transport-https \
-    libzmq1 libzmq-dev python-dev libc-dev pandoc python-pip \
+    libzmq1 libzmq-dev python-dev libc-dev pandoc python-pip pkg-config \
     build-essential libblas-dev liblapack-dev gfortran \
     libfreetype6-dev libpng-dev net-tools procps \
     r-base libreadline-dev && \
@@ -33,7 +33,7 @@ RUN mkdir /import /ipython_setup
 ENV HOME /ipython_setup
 
 # Install MathJax locally because it has some problems with https as reported here: https://github.com/bgruening/galaxy-ipython/pull/8
-RUN python -c 'from IPython.external import mathjax; mathjax.install_mathjax("2.4.0")'
+RUN python -c 'from IPython.external import mathjax; mathjax.install_mathjax("2.5.0")'
 
 # We can get away with just creating this single file and IPython will create the rest of the
 # profile for us.
