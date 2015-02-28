@@ -6,6 +6,8 @@ A variety of different packages are pre-installed and can be used right away.
 
 This docker container is used by the [Galaxy-IPython project](https://github.com/bgruening/galaxy-ipython) and can be installed from the [docker.io index](https://registry.hub.docker.com/u/bgruening/docker-ipython-notebook/).
 
+[![DOI](https://zenodo.org/badge/5466/bgruening/docker-ipython-notebook.svg)](http://dx.doi.org/10.5281/zenodo.15717)
+
 Usage
 =====
 
@@ -37,6 +39,7 @@ History
 =======
 
 - v0.1: Initial public release
+- v0.2: Upgrade IPython to version 2.4
 
 
 Licence (MIT)
