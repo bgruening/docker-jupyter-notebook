@@ -12,7 +12,7 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 && \
     echo 'deb http://cran.r-project.org/bin/linux/ubuntu trusty/' >> /etc/apt/sources.list && \
     apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libxml2-dev \
     apt-transport-https python-dev libc-dev pandoc python-pip pkg-config liblzma-dev libbz2-dev libpcre3-dev \
-    build-essential libblas-dev liblapack-dev gfortran libzmq3-dev \
+    build-essential libblas-dev liblapack-dev gfortran libzmq3-dev curl \
     libfreetype6-dev libpng-dev net-tools procps r-base libreadline-dev && \
     pip install distribute --upgrade && \
     pip install pyzmq ipython==2.4 jinja2 tornado pygments numpy biopython scikit-learn pandas \
