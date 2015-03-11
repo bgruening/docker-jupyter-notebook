@@ -27,24 +27,25 @@ RUN chmod +x /monitor_traffic.sh
 
 # /import will be the universal mount-point for IPython
 # The Galaxy instance can copy in data that needs to be present to the IPython webserver
-RUN mkdir /import /ipython_setup
+RUN mkdir /import /home/ipython
 
-# Some libraries will try to save same data in $HOME, so this needs to be writeable
-ENV HOME /ipython_setup
+# Create user and group with the same UID and GID as the Galaxy main docker container.
+RUN groupadd -r ipython -g 1450 && \
+    useradd -u 1450 -r -g ipython -d /home/ipython -c "IPython user" ipython && \
+    chown -R 1450:1450 /home/ipython /import
 
 # Install MathJax locally because it has some problems with https as reported here: https://github.com/bgruening/galaxy-ipython/pull/8
 RUN python -c 'from IPython.external import mathjax; mathjax.install_mathjax("2.5.0")'
 
 # We can get away with just creating this single file and IPython will create the rest of the
 # profile for us.
-RUN mkdir -p /ipython_setup/.ipython/profile_default/startup/
-RUN mkdir -p /ipython_setup/.ipython/profile_default/static/custom/
+RUN mkdir -p /home/ipython/.ipython/profile_default/startup/
+RUN mkdir -p /home/ipython/.ipython/profile_default/static/custom/
 
-ADD ./ipython-profile.py /ipython_setup/.ipython/profile_default/startup/00-load.py
-ADD ./ipython_notebook_config.py /ipython_setup/.ipython/profile_default/ipython_notebook_config.py
-ADD ./custom.js /ipython_setup/.ipython/profile_default/static/custom/custom.js
-ADD ./custom.css /ipython_setup/.ipython/profile_default/static/custom/custom.css
-RUN chmod 777 -R /import/ /ipython_setup/
+ADD ./ipython-profile.py /home/ipython/.ipython/profile_default/startup/00-load.py
+ADD ./ipython_notebook_config.py /home/ipython/.ipython/profile_default/ipython_notebook_config.py
+ADD ./custom.js /home/ipython/.ipython/profile_default/static/custom/custom.js
+ADD ./custom.css /home/ipython/.ipython/profile_default/static/custom/custom.css
 
 # Add python module to a special folder for modules we want to be able to load within IPython
 RUN mkdir /py/
@@ -54,10 +55,9 @@ ADD ./get /py/get
 # Make sure the system is aware that it can look for python code here
 ENV PYTHONPATH /py/:$PYTHONPATH
 ENV PATH /py/:$PATH
-RUN chmod 777 -R /py/
 
 # Drop privileges
-USER nobody
+USER ipython
 
 VOLUME ["/import/"]
 WORKDIR /import/
