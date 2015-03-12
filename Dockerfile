@@ -33,6 +33,9 @@ RUN mkdir /import /home/ipython
 RUN groupadd -r ipython -g 1450 && \
     useradd -u 1450 -r -g ipython -d /home/ipython -c "IPython user" ipython
 
+# Drop privileges
+USER ipython
+
 # Install MathJax locally because it has some problems with https as reported here: https://github.com/bgruening/galaxy-ipython/pull/8
 RUN python -c 'from IPython.external import mathjax; mathjax.install_mathjax("2.5.0")'
 
@@ -54,11 +57,6 @@ ADD ./get /py/get
 # Make sure the system is aware that it can look for python code here
 ENV PYTHONPATH /py/:$PYTHONPATH
 ENV PATH /py/:$PATH
-
-RUN chown -R 1450:1450 /home/ipython /import
-
-# Drop privileges
-USER ipython
 
 VOLUME ["/import/"]
 WORKDIR /import/
