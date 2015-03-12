@@ -31,7 +31,8 @@ RUN mkdir /import /home/ipython
 
 # Create user and group with the same UID and GID as the Galaxy main docker container.
 RUN groupadd -r ipython -g 1450 && \
-    useradd -u 1450 -r -g ipython -d /home/ipython -c "IPython user" ipython
+    useradd -u 1450 -r -g ipython -d /home/ipython -c "IPython user" ipython && \
+    chown ipython:ipython /home/ipython
 
 # Drop privileges
 USER ipython
@@ -50,13 +51,13 @@ ADD ./custom.js /home/ipython/.ipython/profile_default/static/custom/custom.js
 ADD ./custom.css /home/ipython/.ipython/profile_default/static/custom/custom.css
 
 # Add python module to a special folder for modules we want to be able to load within IPython
-RUN mkdir /py/
+RUN mkdir /home/ipython/py/
 ADD ./galaxy.py /py/galaxy.py
-ADD ./put /py/put
-ADD ./get /py/get
+ADD ./put /home/ipython/py/put
+ADD ./get /home/ipython/py/get
 # Make sure the system is aware that it can look for python code here
-ENV PYTHONPATH /py/:$PYTHONPATH
-ENV PATH /py/:$PATH
+ENV PYTHONPATH /home/ipython/py/:$PYTHONPATH
+ENV PATH /home/ipython/py/:$PATH
 
 VOLUME ["/import/"]
 WORKDIR /import/
