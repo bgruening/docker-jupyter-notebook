@@ -52,12 +52,14 @@ ADD ./custom.css /home/ipython/.ipython/profile_default/static/custom/custom.css
 
 # Add python module to a special folder for modules we want to be able to load within IPython
 RUN mkdir /home/ipython/py/
-ADD ./galaxy.py /py/galaxy.py
+ADD ./galaxy.py /home/ipython/py/galaxy.py
 ADD ./put /home/ipython/py/put
 ADD ./get /home/ipython/py/get
 # Make sure the system is aware that it can look for python code here
 ENV PYTHONPATH /home/ipython/py/:$PYTHONPATH
 ENV PATH /home/ipython/py/:$PATH
+
+RUN chown -R ipython:ipython /home/ipython/
 
 VOLUME ["/import/"]
 WORKDIR /import/
