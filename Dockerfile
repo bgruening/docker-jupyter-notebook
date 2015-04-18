@@ -58,9 +58,6 @@ ENV PATH /home/ipython/py/:$PATH
 
 RUN chown -R ipython:ipython /home/ipython/
 
-# Drop privileges
-USER ipython
-
 VOLUME ["/import/"]
 WORKDIR /import/
 
