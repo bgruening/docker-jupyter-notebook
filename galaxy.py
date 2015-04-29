@@ -68,7 +68,12 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
     key = conf['api_key']
 
     ### Customised galaxy_url ###
-
+    galaxy_ip = _get_ip()
+    # Substitute $DOCKER_HOST with real IP
+    url = Template(conf['galaxy_url']).substitute({'DOCKER_HOST': galaxy_ip})
+    gi = _test_url(url, key, history_id, use_objects=use_objects)
+    if gi is not None:
+        return gi
 
     ### Raw galaxy_url ###
     url = conf['galaxy_url']
@@ -81,9 +86,6 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
     app_path = conf['galaxy_url'].rstrip('/')
     # Remove protocol+host:port if included
     app_path = ''.join(app_path.split('/')[3:])
-    # Now obtain IP address from a netstat command.
-    galaxy_ip = _get_ip()
-
 
     if 'galaxy_paster_port' not in conf:
         # We've failed to detect a port in the config we were given by
