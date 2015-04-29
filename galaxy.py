@@ -7,6 +7,7 @@ import yaml
 import subprocess
 import argparse
 import os
+from string import Template
 
 # Consider not using objects deprecated.
 DEFAULT_USE_OBJECTS = True
@@ -16,6 +17,34 @@ def _get_conf( config_file = '/import/conf.yaml' ):
     with open(config_file, 'rb') as handle:
         conf = yaml.load(handle)
     return conf
+
+
+def _get_ip():
+    """Get IP address for the docker host
+    """
+    cmd_netstat = ['netstat','-nr']
+    p1 = subprocess.Popen(cmd_netstat, stdout=subprocess.PIPE)
+    cmd_grep = ['grep', '^0\.0\.0\.0']
+    p2 = subprocess.Popen(cmd_grep, stdin=p1.stdout, stdout=subprocess.PIPE)
+    cmd_awk = ['awk', '{ print $2 }']
+    p3 = subprocess.Popen(cmd_awk, stdin=p2.stdout, stdout=subprocess.PIPE)
+    galaxy_ip = p3.stdout.read()
+    return galaxy_ip
+
+
+def _test_url(url, key, history_id, use_objects=False):
+    """Test the functionality of a given galaxy URL, to ensure we can connect
+    on that address."""
+    try:
+        if use_objects:
+            gi = objects.GalaxyInstance(url, key)
+            gi.histories.get(history_id)
+        else:
+            gi = galaxy.GalaxyInstance(url=url, key=key)
+            gi.histories.get_histories()
+        return gi
+    except Exception:
+        return None
 
 
 def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
@@ -37,50 +66,39 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
     conf = _get_conf()
     history_id = conf["history_id"]
     key = conf['api_key']
-    try:
-        # Remove trailing slashes
-        app_path = conf['galaxy_url'].rstrip('/')
-        # Remove protocol+host:port if included
-        app_path = ''.join(app_path.split('/')[3:])
-        # Now obtain IP address from a netstat command.
 
-        cmd_netstat = ['netstat','-nr']
-        p1 = subprocess.Popen(cmd_netstat, stdout=subprocess.PIPE)
-        cmd_grep = ['grep', '^0\.0\.0\.0']
-        p2 = subprocess.Popen(cmd_grep, stdin=p1.stdout, stdout=subprocess.PIPE)
-        cmd_awk = ['awk', '{ print $2 }']
-        p3 = subprocess.Popen(cmd_awk, stdin=p2.stdout, stdout=subprocess.PIPE)
-        # Now we have an ip address to connect to galaxy on.
-        galaxy_ip = p3.stdout.read()
+    ### Customised/Raw galaxy_url ###
+    galaxy_ip = _get_ip()
+    # Substitute $DOCKER_HOST with real IP
+    url = Template(conf['galaxy_url']).substitute({'DOCKER_HOST': galaxy_ip})
+    gi = _test_url(url, key, history_id, use_objects=use_objects)
+    if gi is not None:
+        return gi
+
+    ### Failover, fully auto-detected URL ###
+    # Remove trailing slashes
+    app_path = conf['galaxy_url'].rstrip('/')
+    # Remove protocol+host:port if included
+    app_path = ''.join(app_path.split('/')[3:])
+
+    if 'galaxy_paster_port' not in conf:
+        # We've failed to detect a port in the config we were given by
+        # galaxy, so we won't be able to construct a valid URL
+        raise Exception("No port")
+    else:
         # We should be able to find a port to connect to galaxy on via this
         # conf var: galaxy_paster_port
         galaxy_port = conf['galaxy_paster_port']
 
-        if not galaxy_port:
-            # We've failed to detect a port in the config we were given by
-            # galaxy, so we won't be able to construct a valid URL
-            raise Exception("No port")
+    built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port, app_path.strip())
+    url = built_galaxy_url.rstrip('/')
 
-        built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port, app_path.strip())
-        url = built_galaxy_url.rstrip('/')
-        if use_objects:
-            gi = objects.GalaxyInstance(url, key)
-            gi.histories.get(history_id)
-        else:
-            gi = galaxy.GalaxyInstance(url=url, key=key)
-            gi.histories.get_histories()
-    except:
-        try:
-            url = conf['galaxy_url']
-            if use_objects:
-                gi = objects.GalaxyInstance(url, key)
-                gi.histories.get(history_id)
-            else:
-                gi = galaxy.GalaxyInstance(url=url, key=key)
-                gi.histories.get_histories()
-        except Exception as e:
-            raise Exception("Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error" + str(e))
-    return gi
+    gi = _test_url(url, key, history_id, use_objects=use_objects)
+    if gi is not None:
+        return gi
+
+    ### Fail ###
+    raise Exception("Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error")
 
 
 def _get_history_id():
@@ -145,7 +163,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Connect to Galaxy through the API')
     parser.add_argument('--action',   help='Action to execute', choices=['get', 'put'])
     parser.add_argument('--argument', help='File/ID number to Upload/Download, respectively')
-    parser.add_argument('--history-id', dest="history_id", default=None, 
+    parser.add_argument('--history-id', dest="history_id", default=None,
         help='History ID. The history ID and the dataset ID uniquly identify a dataset. Per default this is set to the current Galaxy history.')
     parser.add_argument('-t', '--filetype', help='Galaxy file format. If not specified Galaxy will try to guess the filetype automatically.', default='auto')
     args = parser.parse_args()
