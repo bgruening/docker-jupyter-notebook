@@ -56,6 +56,17 @@ ADD ./get /home/ipython/py/get
 ENV PYTHONPATH /home/ipython/py/:$PYTHONPATH
 ENV PATH /home/ipython/py/:$PATH
 
+# ENV variables to replace conf file
+ENV DEBUG false
+ENV GALAXY_WEB_PORT 10000
+ENV NOTEBOOK_PASSWORD password
+ENV CORS_ORIGIN http://localhost:10000
+ENV DOCKER_PORT 10001
+ENV API_KEY none
+ENV HISTORY_ID none
+ENV REMOTE_HOST none
+ENV GALAXY_URL none
+
 RUN chown -R ipython:ipython /home/ipython/
 
 # Drop privileges
