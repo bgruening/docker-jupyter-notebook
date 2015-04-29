@@ -57,6 +57,7 @@ History
 
 - v0.1: Initial public release
 - v0.2: Upgrade IPython to version 2.4
+- v0.3: Switch to environment based image configuration. Fix dataset ownership bugs.
 
 
 Licence (MIT)
