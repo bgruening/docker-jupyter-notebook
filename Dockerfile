@@ -35,7 +35,7 @@ RUN groupadd -r ipython -g 1450 && \
     chown ipython:ipython /home/ipython
 
 # Install MathJax locally because it has some problems with https as reported here: https://github.com/bgruening/galaxy-ipython/pull/8
-RUN python -c 'from IPython.external import mathjax; mathjax.install_mathjax("2.5.0")'
+RUN python -c 'from IPython.external import mathjax; mathjax.install_mathjax("2.5.1")'
 
 # We can get away with just creating this single file and IPython will create the rest of the
 # profile for us.
@@ -57,9 +57,6 @@ ENV PYTHONPATH /home/ipython/py/:$PYTHONPATH
 ENV PATH /home/ipython/py/:$PATH
 
 RUN chown -R ipython:ipython /home/ipython/
-
-# Drop privileges
-USER ipython
 
 VOLUME ["/import/"]
 WORKDIR /import/
