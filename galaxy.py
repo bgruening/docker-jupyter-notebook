@@ -84,14 +84,15 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
     # Now obtain IP address from a netstat command.
     galaxy_ip = _get_ip()
 
-    # We should be able to find a port to connect to galaxy on via this
-    # conf var: galaxy_paster_port
-    galaxy_port = conf['galaxy_paster_port']
 
-    if not galaxy_port:
+    if 'galaxy_paster_port' not in conf:
         # We've failed to detect a port in the config we were given by
         # galaxy, so we won't be able to construct a valid URL
         raise Exception("No port")
+    else:
+        # We should be able to find a port to connect to galaxy on via this
+        # conf var: galaxy_paster_port
+        galaxy_port = conf['galaxy_paster_port']
 
     built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port, app_path.strip())
     url = built_galaxy_url.rstrip('/')
