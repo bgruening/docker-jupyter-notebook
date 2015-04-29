@@ -57,15 +57,15 @@ ENV PYTHONPATH /home/ipython/py/:$PYTHONPATH
 ENV PATH /home/ipython/py/:$PATH
 
 # ENV variables to replace conf file
-ENV DEBUG false
-ENV GALAXY_WEB_PORT 10000
-ENV NOTEBOOK_PASSWORD none
-ENV CORS_ORIGIN none
-ENV DOCKER_PORT none
-ENV API_KEY none
-ENV HISTORY_ID none
-ENV REMOTE_HOST none
-ENV GALAXY_URL none
+ENV DEBUG=false \
+    GALAXY_WEB_PORT=10000 \
+    NOTEBOOK_PASSWORD=none \
+    CORS_ORIGIN=none \
+    DOCKER_PORT=none \
+    API_KEY=none \
+    HISTORY_ID=none \
+    REMOTE_HOST=none \
+    GALAXY_URL=none
 
 RUN chown -R ipython:ipython /home/ipython/
 
