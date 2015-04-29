@@ -32,6 +32,21 @@ def _get_ip():
     return galaxy_ip
 
 
+def _test_url(url, key, history_id, use_objects=False):
+    """Test the functionality of a given galaxy URL, to ensure we can connect
+    on that address."""
+    try:
+        if use_objects:
+            gi = objects.GalaxyInstance(url, key)
+            gi.histories.get(history_id)
+        else:
+            gi = galaxy.GalaxyInstance(url=url, key=key)
+            gi.histories.get_histories()
+        return gi
+    except Exception:
+        return None
+
+
 def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
     """
         Given access to the configuration dict that galaxy passed us, we try and connect to galaxy's API.
@@ -59,11 +74,9 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
         # Now obtain IP address from a netstat command.
         galaxy_ip = _get_ip()
 
-
         # We should be able to find a port to connect to galaxy on via this
         # conf var: galaxy_paster_port
         galaxy_port = conf['galaxy_paster_port']
-
 
 
         if not galaxy_port:
@@ -73,24 +86,19 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
 
         built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port, app_path.strip())
         url = built_galaxy_url.rstrip('/')
-        if use_objects:
-            gi = objects.GalaxyInstance(url, key)
-            gi.histories.get(history_id)
+
+        gi = _test_url(url, key, history_id, use_objects=use_objects)
+        if gi is None:
+            raise Exception()
         else:
-            gi = galaxy.GalaxyInstance(url=url, key=key)
-            gi.histories.get_histories()
+            return gi
     except:
-        try:
-            url = conf['galaxy_url']
-            if use_objects:
-                gi = objects.GalaxyInstance(url, key)
-                gi.histories.get(history_id)
-            else:
-                gi = galaxy.GalaxyInstance(url=url, key=key)
-                gi.histories.get_histories()
-        except Exception as e:
+        url = conf['galaxy_url']
+        gi = _test_url(url, key, history_id, use_objects=use_objects)
+        if gi is None:
             raise Exception("Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error" + str(e))
-    return gi
+        else:
+            return gi
 
 
 def _get_history_id():
