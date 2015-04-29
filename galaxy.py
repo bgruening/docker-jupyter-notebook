@@ -149,7 +149,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Connect to Galaxy through the API')
     parser.add_argument('--action',   help='Action to execute', choices=['get', 'put'])
     parser.add_argument('--argument', help='File/ID number to Upload/Download, respectively')
-    parser.add_argument('--history-id', dest="history_id", default=None,
+    parser.add_argument('--history-id', dest="history_id", default=None, 
         help='History ID. The history ID and the dataset ID uniquly identify a dataset. Per default this is set to the current Galaxy history.')
     parser.add_argument('-t', '--filetype', help='Galaxy file format. If not specified Galaxy will try to guess the filetype automatically.', default='auto')
     args = parser.parse_args()
