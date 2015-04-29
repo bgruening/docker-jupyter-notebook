@@ -67,16 +67,10 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
     history_id = conf["history_id"]
     key = conf['api_key']
 
-    ### Customised galaxy_url ###
+    ### Customised/Raw galaxy_url ###
     galaxy_ip = _get_ip()
     # Substitute $DOCKER_HOST with real IP
     url = Template(conf['galaxy_url']).substitute({'DOCKER_HOST': galaxy_ip})
-    gi = _test_url(url, key, history_id, use_objects=use_objects)
-    if gi is not None:
-        return gi
-
-    ### Raw galaxy_url ###
-    url = conf['galaxy_url']
     gi = _test_url(url, key, history_id, use_objects=use_objects)
     if gi is not None:
         return gi
