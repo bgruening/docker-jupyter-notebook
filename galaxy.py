@@ -66,39 +66,42 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
     conf = _get_conf()
     history_id = conf["history_id"]
     key = conf['api_key']
-    try:
-        # Remove trailing slashes
-        app_path = conf['galaxy_url'].rstrip('/')
-        # Remove protocol+host:port if included
-        app_path = ''.join(app_path.split('/')[3:])
-        # Now obtain IP address from a netstat command.
-        galaxy_ip = _get_ip()
 
-        # We should be able to find a port to connect to galaxy on via this
-        # conf var: galaxy_paster_port
-        galaxy_port = conf['galaxy_paster_port']
+    ### Customised galaxy_url ###
 
 
-        if not galaxy_port:
-            # We've failed to detect a port in the config we were given by
-            # galaxy, so we won't be able to construct a valid URL
-            raise Exception("No port")
+    ### Raw galaxy_url ###
+    url = conf['galaxy_url']
+    gi = _test_url(url, key, history_id, use_objects=use_objects)
+    if gi is not None:
+        return gi
 
-        built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port, app_path.strip())
-        url = built_galaxy_url.rstrip('/')
+    ### Failover, fully auto-detected URL ###
+    # Remove trailing slashes
+    app_path = conf['galaxy_url'].rstrip('/')
+    # Remove protocol+host:port if included
+    app_path = ''.join(app_path.split('/')[3:])
+    # Now obtain IP address from a netstat command.
+    galaxy_ip = _get_ip()
 
-        gi = _test_url(url, key, history_id, use_objects=use_objects)
-        if gi is None:
-            raise Exception()
-        else:
-            return gi
-    except:
-        url = conf['galaxy_url']
-        gi = _test_url(url, key, history_id, use_objects=use_objects)
-        if gi is None:
-            raise Exception("Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error" + str(e))
-        else:
-            return gi
+    # We should be able to find a port to connect to galaxy on via this
+    # conf var: galaxy_paster_port
+    galaxy_port = conf['galaxy_paster_port']
+
+    if not galaxy_port:
+        # We've failed to detect a port in the config we were given by
+        # galaxy, so we won't be able to construct a valid URL
+        raise Exception("No port")
+
+    built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port, app_path.strip())
+    url = built_galaxy_url.rstrip('/')
+
+    gi = _test_url(url, key, history_id, use_objects=use_objects)
+    if gi is not None:
+        return gi
+
+    ### Fail ###
+    raise Exception("Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error")
 
 
 def _get_history_id():
