@@ -56,6 +56,17 @@ ADD ./get /home/ipython/py/get
 ENV PYTHONPATH /home/ipython/py/:$PYTHONPATH
 ENV PATH /home/ipython/py/:$PATH
 
+# ENV variables to replace conf file
+ENV DEBUG=false \
+    GALAXY_WEB_PORT=10000 \
+    NOTEBOOK_PASSWORD=none \
+    CORS_ORIGIN=none \
+    DOCKER_PORT=none \
+    API_KEY=none \
+    HISTORY_ID=none \
+    REMOTE_HOST=none \
+    GALAXY_URL=none
+
 RUN chown -R ipython:ipython /home/ipython/
 
 VOLUME ["/import/"]

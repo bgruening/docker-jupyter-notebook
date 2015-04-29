@@ -3,7 +3,6 @@ from bioblend.galaxy.tools import ToolClient
 from bioblend.galaxy.histories import HistoryClient
 from bioblend.galaxy.datasets import DatasetClient
 from bioblend.galaxy import objects
-import yaml
 import subprocess
 import argparse
 import os
@@ -11,11 +10,16 @@ from string import Template
 
 # Consider not using objects deprecated.
 DEFAULT_USE_OBJECTS = True
+ENV_KEYS = ('DEBUG', 'GALAXY_WEB_PORT', 'NOTEBOOK_PASSWORD', 'CORS_ORIGIN',
+            'DOCKER_PORT', 'API_KEY', 'HISTORY_ID', 'REMOTE_HOST',
+            'GALAXY_URL')
 
 
-def _get_conf( config_file = '/import/conf.yaml' ):
-    with open(config_file, 'rb') as handle:
-        conf = yaml.load(handle)
+def _get_conf():
+    conf = {}
+    for key in ENV_KEYS:
+        conf[key.lower()] = os.environ.get(key, None)
+    conf['galaxy_paster_port'] = conf['galaxy_web_port']
     return conf
 
 

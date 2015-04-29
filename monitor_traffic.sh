@@ -16,7 +16,10 @@ while true; do
         pkill ipython
         # We will create new history elements with all data that is relevant,
         # this means we can delete everything from /import/
-        rm /import/ -rf
+        if [[ "$DEBUG" == "false" ]];
+        then
+            rm /import/ -rf;
+        fi
     fi
 
 done
