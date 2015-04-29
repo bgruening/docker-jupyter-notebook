@@ -70,7 +70,7 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
     ### Customised/Raw galaxy_url ###
     galaxy_ip = _get_ip()
     # Substitute $DOCKER_HOST with real IP
-    url = Template(conf['galaxy_url']).substitute({'DOCKER_HOST': galaxy_ip})
+    url = Template(conf['galaxy_url']).safe_substitute({'DOCKER_HOST': galaxy_ip})
     gi = _test_url(url, key, history_id, use_objects=use_objects)
     if gi is not None:
         return gi
