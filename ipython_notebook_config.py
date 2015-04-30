@@ -21,8 +21,8 @@ if os.environ.get('DOCKER_PORT', 'none') == 'none':
     c.NotebookApp.base_url = '/ipython/'
     c.NotebookApp.webapp_settings = {'static_url_prefix': '/ipython/static/'}
 else:
-    c.NotebookApp.base_url = '/ipython/%d/' % os.environ['DOCKER_PORT']
-    c.NotebookApp.webapp_settings = {'static_url_prefix': '/ipython/%d/static/' % os.environ['DOCKER_PORT']}
+    c.NotebookApp.base_url = '/ipython/%s/' % os.environ['DOCKER_PORT']
+    c.NotebookApp.webapp_settings = {'static_url_prefix': '/ipython/%s/static/' % os.environ['DOCKER_PORT']}
 
 if os.environ.get('NOTEBOOK_PASSWORD', 'none') != 'none':
     c.NotebookApp.password = os.environ['NOTEBOOK_PASSWORD']
