@@ -28,6 +28,23 @@ Usage
  ``docker run -p 7777:6789 -v /home/user/foo/:/import/ bgruening/docker-ipython-notebook ``  
 
 
+Environment Variables
+=====================
+
+Some environment variables are made available to the user which will allow for configuring the behaviour of individual instances.
+
+Variable            | Use
+------------------- | ---
+`GALAXY_WEB_PORT`   | Port on which Galaxy is running, if applicable
+`NOTEBOOK_PASSWORD` | Password with which to secure the notebook
+`CORS_ORIGIN`       | If the notebook is proxied, this is the URL the end-user will see when trying to access a notebook
+`DOCKER_PORT`       | Used in Galaxy Interactive Environments to ensure that proxy routes are unique and accessible
+`API_KEY`           | Galaxy API Key with which to interface with Galaxy
+`HISTORY_ID`        | ID of current Galaxy History, used in easing the dataset upload/download process
+`REMOTE_HOST`       | Unused
+`GALAXY_URL`        | URL at which Galaxy is accessible
+`DEBUG`             | Enable debugging mode, mostly for developers
+
 
 Authors
 =======
@@ -40,6 +57,7 @@ History
 
 - v0.1: Initial public release
 - v0.2: Upgrade IPython to version 2.4
+- v0.3: Switch to environment based image configuration. Fix dataset ownership bugs.
 
 
 Licence (MIT)
