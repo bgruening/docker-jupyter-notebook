@@ -7,6 +7,8 @@ import subprocess
 import argparse
 import os
 from string import Template
+import logging
+logging.getLogger("bioblend").setLevel(logging.WARNING)
 
 # Consider not using objects deprecated.
 DEFAULT_USE_OBJECTS = True
