@@ -1,6 +1,8 @@
 Docker IPython Container
 ========================
 
+[![Docker IPython Container](http://dockeri.co/image/bgruening/docker-ipython-notebook)](https://registry.hub.docker.com/u/bgruening/docker-ipython-notebook/)
+
 IPython running in a docker container. This image can be used to integrate IPython into Galaxy.
 A variety of different packages are pre-installed and can be used right away.
 
