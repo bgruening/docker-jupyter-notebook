@@ -70,7 +70,6 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
         the conditions of REMOTE_USER and galaxy running under uWSGI.
     """
     conf = _get_conf()
-    history_id = conf["history_id"]
     key = conf['api_key']
 
     ### Customised/Raw galaxy_url ###
