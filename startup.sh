@@ -14,8 +14,8 @@ if [[ $uid != '1450' ]] && [[ $gid != '1450' ]]; then
 
 else
 
-    ipython trust /import/ipython_galaxy_notebook.ipynb
-    /monitor_traffic.sh &
-    ipython notebook --no-browser
+    su ipython -c 'ipython trust /import/ipython_galaxy_notebook.ipynb'
+    su ipython -c '/monitor_traffic.sh' &
+    su ipython -c 'ipython notebook --no-browser'
 
 fi
