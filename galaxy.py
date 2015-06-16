@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from bioblend import galaxy
 from bioblend.galaxy.tools import ToolClient
 from bioblend.galaxy.histories import HistoryClient
@@ -8,7 +9,7 @@ import argparse
 import os
 from string import Template
 import logging
-DEBUG = os.environ.get('DEBUG', False) == 'True'
+DEBUG = os.environ.get('DEBUG', "False").lower() == 'true'
 if DEBUG:
     logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("bioblend").setLevel(logging.WARNING)
@@ -17,17 +18,6 @@ log = logging.getLogger()
 
 # Consider not using objects deprecated.
 DEFAULT_USE_OBJECTS = True
-ENV_KEYS = ('DEBUG', 'GALAXY_WEB_PORT', 'NOTEBOOK_PASSWORD', 'CORS_ORIGIN',
-            'DOCKER_PORT', 'API_KEY', 'HISTORY_ID', 'REMOTE_HOST',
-            'GALAXY_URL')
-
-
-def _get_conf():
-    conf = {}
-    for key in ENV_KEYS:
-        conf[key.lower()] = os.environ.get(key, None)
-    conf['galaxy_paster_port'] = conf['galaxy_web_port']
-    return conf
 
 
 def _get_ip():
@@ -60,7 +50,7 @@ def _test_url(url, key, history_id, use_objects=False):
         return None
 
 
-def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
+def get_galaxy_connection(history_id=None, use_objects=DEFAULT_USE_OBJECTS):
     """
         Given access to the configuration dict that galaxy passed us, we try and connect to galaxy's API.
 
@@ -76,32 +66,31 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
         through. This will succeed where the previous connection fails under
         the conditions of REMOTE_USER and galaxy running under uWSGI.
     """
-    conf = _get_conf()
-    history_id = conf["history_id"]
-    key = conf['api_key']
+    history_id = history_id or os.environ['HISTORY_ID']
+    key = os.environ['API_KEY']
 
     ### Customised/Raw galaxy_url ###
     galaxy_ip = _get_ip()
     # Substitute $DOCKER_HOST with real IP
-    url = Template(conf['galaxy_url']).safe_substitute({'DOCKER_HOST': galaxy_ip})
+    url = Template(os.environ['GALAXY_URL']).safe_substitute({'DOCKER_HOST': galaxy_ip})
     gi = _test_url(url, key, history_id, use_objects=use_objects)
     if gi is not None:
         return gi
 
     ### Failover, fully auto-detected URL ###
     # Remove trailing slashes
-    app_path = conf['galaxy_url'].rstrip('/')
+    app_path = os.environ['GALAXY_URL'].rstrip('/')
     # Remove protocol+host:port if included
     app_path = ''.join(app_path.split('/')[3:])
 
-    if 'galaxy_paster_port' not in conf:
+    if 'GALAXY_WEB_PORT' not in os.environ:
         # We've failed to detect a port in the config we were given by
         # galaxy, so we won't be able to construct a valid URL
         raise Exception("No port")
     else:
         # We should be able to find a port to connect to galaxy on via this
         # conf var: galaxy_paster_port
-        galaxy_port = conf['galaxy_paster_port']
+        galaxy_port = os.environ['GALAXY_WEB_PORT']
 
     built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port, app_path.strip())
     url = built_galaxy_url.rstrip('/')
@@ -112,7 +101,7 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
 
     ### Fail ###
     msg = "Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error"
-    if conf['galaxy_url'] == '127.0.0.1':
+    if os.environ['GALAXY_URL'] == '127.0.0.1':
         msg += (
             "\nWe see that you're running on localhost. "
             "By binding to localhost, you prevent the docker "
@@ -129,10 +118,9 @@ def put(filename, file_type='auto', history_id=None, use_objects=DEFAULT_USE_OBJ
         function will upload that file to galaxy using the current history.
         Does not return anything.
     """
-    conf = _get_conf()
-    history_id = args.history_id or conf['history_id']
+    history_id = history_id or os.environ['HISTORY_ID']
 
-    gi = get_galaxy_connection(use_objects)
+    gi = get_galaxy_connection(history_id=history_id, use_objects=use_objects)
     if use_objects:
         history = gi.histories.get( history_id )
         history.upload_dataset(filename, file_type=file_type)
@@ -147,10 +135,9 @@ def get(dataset_id, history_id=None, use_objects=DEFAULT_USE_OBJECTS):
         download the file from the history and stores it under /import/
         Return value is the path to the dataset stored under /import/
     """
-    conf = _get_conf()
-    history_id = args.history_id or conf['history_id']
+    history_id = history_id or os.environ['HISTORY_ID']
 
-    gi = get_galaxy_connection(use_objects)
+    gi = get_galaxy_connection(history_id=history_id, use_objects=use_objects)
 
     file_path = '/import/%s' % dataset_id
 
