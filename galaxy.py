@@ -8,10 +8,10 @@ import argparse
 import os
 from string import Template
 import logging
-logging.getLogger("bioblend").setLevel(logging.WARNING)
 DEBUG = os.environ.get('DEBUG', False) == 'True'
 if DEBUG:
     logging.basicConfig(level=logging.DEBUG)
+logging.getLogger("bioblend").setLevel(logging.WARNING)
 log = logging.getLogger()
 
 
