@@ -110,7 +110,16 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
         return gi
 
     ### Fail ###
-    raise Exception("Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error")
+    msg = "Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error"
+    if conf['galaxy_url'] == '127.0.0.1':
+        msg += (
+            "\nWe see that you're running on localhost. "
+            "By binding to localhost, you prevent the docker "
+            "based interactive environment from contacting the host, "
+            "as the host galaxy refuses to answer anything that "
+            "isn't from '127.0.0.1', like this docker container."
+        )
+    raise Exception(msg)
 
 
 def put(filename, file_type='auto', history_id=None, use_objects=DEFAULT_USE_OBJECTS):
