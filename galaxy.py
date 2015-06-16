@@ -12,7 +12,7 @@ logging.getLogger("bioblend").setLevel(logging.WARNING)
 DEBUG = os.environ.get('DEBUG', False) == 'True'
 if DEBUG:
     logging.basicConfig(level=logging.DEBUG)
-tlog = logging.getLogger()
+log = logging.getLogger()
 
 
 # Consider not using objects deprecated.
