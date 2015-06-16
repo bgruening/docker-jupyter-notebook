@@ -113,14 +113,6 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
     raise Exception("Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error")
 
 
-def _get_history_id():
-    """
-    Extract the history ID from the config file.
-    """
-    conf = _get_conf()
-    return conf['history_id']
-
-
 def put(filename, file_type='auto', history_id=None, use_objects=DEFAULT_USE_OBJECTS):
     """
         Given a filename of any file accessible to the docker instance, this
@@ -176,7 +168,8 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--filetype', help='Galaxy file format. If not specified Galaxy will try to guess the filetype automatically.', default='auto')
     args = parser.parse_args()
 
-    history_id = args.history_id or _get_history_id()
+    conf = _get_conf()
+    history_id = args.history_id or conf['history_id']
 
     if args.action == 'get':
         # Ensure it's a numerical value
