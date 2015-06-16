@@ -1,7 +1,4 @@
 from bioblend import galaxy
-from bioblend.galaxy.tools import ToolClient
-from bioblend.galaxy.histories import HistoryClient
-from bioblend.galaxy.datasets import DatasetClient
 from bioblend.galaxy import objects
 import subprocess
 import argparse
@@ -10,8 +7,6 @@ from string import Template
 import logging
 logging.getLogger("bioblend").setLevel(logging.WARNING)
 
-# Consider not using objects deprecated.
-DEFAULT_USE_OBJECTS = True
 ENV_KEYS = ('DEBUG', 'GALAXY_WEB_PORT', 'NOTEBOOK_PASSWORD', 'CORS_ORIGIN',
             'DOCKER_PORT', 'API_KEY', 'HISTORY_ID', 'REMOTE_HOST',
             'GALAXY_URL')
@@ -38,22 +33,18 @@ def _get_ip():
     return galaxy_ip
 
 
-def _test_url(url, key, history_id, use_objects=False):
+def _test_url(url, key, history_id):
     """Test the functionality of a given galaxy URL, to ensure we can connect
     on that address."""
     try:
-        if use_objects:
-            gi = objects.GalaxyInstance(url, key)
-            gi.histories.get(history_id)
-        else:
-            gi = galaxy.GalaxyInstance(url=url, key=key)
-            gi.histories.get_histories()
+        gi = objects.GalaxyInstance(url, key)
+        gi.histories.get(history_id)
         return gi
     except Exception:
         return None
 
 
-def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
+def get_galaxy_connection():
     """
         Given access to the configuration dict that galaxy passed us, we try and connect to galaxy's API.
 
@@ -76,7 +67,7 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
     galaxy_ip = _get_ip()
     # Substitute $DOCKER_HOST with real IP
     url = Template(conf['galaxy_url']).safe_substitute({'DOCKER_HOST': galaxy_ip})
-    gi = _test_url(url, key, history_id, use_objects=use_objects)
+    gi = _test_url(url, key, history_id)
     if gi is not None:
         return gi
 
@@ -98,7 +89,7 @@ def get_galaxy_connection( use_objects=DEFAULT_USE_OBJECTS ):
     built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port, app_path.strip())
     url = built_galaxy_url.rstrip('/')
 
-    gi = _test_url(url, key, history_id, use_objects=use_objects)
+    gi = _test_url(url, key, history_id)
     if gi is not None:
         return gi
 
@@ -114,31 +105,27 @@ def _get_history_id():
     return conf['history_id']
 
 
-def put(filename, file_type='auto', history_id=None, use_objects=DEFAULT_USE_OBJECTS):
+def put(filename, file_type='auto', history_id=None):
     """
         Given a filename of any file accessible to the docker instance, this
         function will upload that file to galaxy using the current history.
         Does not return anything.
     """
     conf = _get_conf()
-    gi = get_galaxy_connection(use_objects)
+    gi = get_galaxy_connection()
     history_id = history_id or _get_history_id()
-    if use_objects:
-        history = gi.histories.get( history_id )
-        history.upload_dataset(filename, file_type=file_type)
-    else:
-        tc = ToolClient( gi )
-        tc.upload_file(filename, history_id, file_type=file_type)
+    history = gi.histories.get( history_id )
+    history.upload_dataset(filename, file_type=file_type)
 
 
-def get(dataset_id, history_id=None, use_objects=DEFAULT_USE_OBJECTS):
+def get(dataset_id, history_id=None):
     """
         Given the history_id that is displayed to the user, this function will
         download the file from the history and stores it under /import/
         Return value is the path to the dataset stored under /import/
     """
     conf = _get_conf()
-    gi = get_galaxy_connection(use_objects)
+    gi = get_galaxy_connection()
 
     file_path = '/import/%s' % dataset_id
     history_id = history_id or _get_history_id()
@@ -147,19 +134,10 @@ def get(dataset_id, history_id=None, use_objects=DEFAULT_USE_OBJECTS):
     # silly like a get() for a Galaxy file in a for-loop, wouldn't want to
     # re-download every time and add that overhead.
     if not os.path.exists(file_path):
-        if use_objects:
-            history = gi.histories.get(history_id)
-            datasets = dict([( d.wrapped["hid"], d.id ) for d in history.get_datasets()])
-            dataset = history.get_dataset( datasets[dataset_id] )
-            dataset.download( open(file_path, 'wb') )
-        else:
-            hc = HistoryClient(gi)
-            dc = DatasetClient(gi)
-            dataset_mapping = dict([(dataset['hid'], dataset['id']) for dataset in hc.show_history(history_id, contents=True)])
-            try:
-                hc.download_dataset(history_id, dataset_mapping[dataset_id], file_path, use_default_filename=False, to_ext=None)
-            except:
-                dc.download_dataset(dataset_mapping[dataset_id], file_path, use_default_filename=False)
+        history = gi.histories.get(history_id)
+        datasets = dict([( d.wrapped["hid"], d.id ) for d in history.get_datasets()])
+        dataset = history.get_dataset( datasets[dataset_id] )
+        dataset.download( open(file_path, 'wb') )
 
     return file_path
 
