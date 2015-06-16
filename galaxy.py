@@ -101,13 +101,13 @@ def get_galaxy_connection(history_id=None, use_objects=DEFAULT_USE_OBJECTS):
 
     ### Fail ###
     msg = "Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error"
-    if os.environ['GALAXY_URL'] == '127.0.0.1':
+    if '127.0.0.1' in os.environ['GALAXY_URL']:
         msg += (
-            "\nWe see that you're running on localhost. "
-            "By binding to localhost, you prevent the docker "
+            "\nYou seem to be running galaxy on localhost. "
+            "By binding to 127.0.0.1, you prevent the docker "
             "based interactive environment from contacting the host, "
-            "as the host galaxy refuses to answer anything that "
-            "isn't from '127.0.0.1', like this docker container."
+            "as the host galaxy refuses to answer requests that "
+            "don't come from 127.0.0.1, like this docker container."
         )
     raise Exception(msg)
 
