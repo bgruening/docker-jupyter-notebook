@@ -129,6 +129,9 @@ def put(filename, file_type='auto', history_id=None, use_objects=DEFAULT_USE_OBJ
         function will upload that file to galaxy using the current history.
         Does not return anything.
     """
+    conf = _get_conf()
+    history_id = args.history_id or conf['history_id']
+
     gi = get_galaxy_connection(use_objects)
     if use_objects:
         history = gi.histories.get( history_id )
@@ -144,6 +147,9 @@ def get(dataset_id, history_id=None, use_objects=DEFAULT_USE_OBJECTS):
         download the file from the history and stores it under /import/
         Return value is the path to the dataset stored under /import/
     """
+    conf = _get_conf()
+    history_id = args.history_id or conf['history_id']
+
     gi = get_galaxy_connection(use_objects)
 
     file_path = '/import/%s' % dataset_id
@@ -177,9 +183,6 @@ if __name__ == '__main__':
         help='History ID. The history ID and the dataset ID uniquly identify a dataset. Per default this is set to the current Galaxy history.')
     parser.add_argument('-t', '--filetype', help='Galaxy file format. If not specified Galaxy will try to guess the filetype automatically.', default='auto')
     args = parser.parse_args()
-
-    conf = _get_conf()
-    history_id = args.history_id or conf['history_id']
 
     if args.action == 'get':
         # Ensure it's a numerical value
