@@ -12,7 +12,7 @@ import logging
 DEBUG = os.environ.get('DEBUG', "False").lower() == 'true'
 if DEBUG:
     logging.basicConfig(level=logging.DEBUG)
-logging.getLogger("bioblend").setLevel(logging.WARNING)
+logging.getLogger("bioblend").setLevel(logging.CRITICAL)
 log = logging.getLogger()
 
 
