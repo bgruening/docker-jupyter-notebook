@@ -9,6 +9,11 @@ import os
 from string import Template
 import logging
 logging.getLogger("bioblend").setLevel(logging.WARNING)
+DEBUG = os.environ.get('DEBUG', False) == 'True'
+if DEBUG:
+    logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger()
+
 
 # Consider not using objects deprecated.
 DEFAULT_USE_OBJECTS = True
