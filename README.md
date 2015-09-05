@@ -8,7 +8,9 @@ A variety of different packages are pre-installed and can be used right away.
 
 This docker container is used by the [Galaxy-IPython project](https://github.com/bgruening/galaxy-ipython) and can be installed from the [docker.io index](https://registry.hub.docker.com/u/bgruening/docker-ipython-notebook/).
 
-[![DOI](https://zenodo.org/badge/5466/bgruening/docker-ipython-notebook.svg)](http://dx.doi.org/10.5281/zenodo.15717)
+
+[![DOI](https://zenodo.org/badge/5466/bgruening/docker-ipython-notebook.svg)](https://zenodo.org/badge/latestdoi/5466/bgruening/docker-ipython-notebook)
+
 
 Usage
 =====
