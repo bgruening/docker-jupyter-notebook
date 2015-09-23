@@ -20,10 +20,7 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ADD ./startup.sh /startup.sh
-RUN chmod +x /startup.sh
-
 ADD ./monitor_traffic.sh /monitor_traffic.sh
-RUN chmod +x /monitor_traffic.sh
 
 # /import will be the universal mount-point for IPython
 # The Galaxy instance can copy in data that needs to be present to the IPython webserver
