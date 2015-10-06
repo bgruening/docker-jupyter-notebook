@@ -17,12 +17,10 @@ c.NotebookApp.allow_credentials = True
 
 # In case this Notebook was launched from Galaxy a config file exists in /import/
 # For standalone usage we fall back to a port-less URL
-if os.environ.get('DOCKER_PORT', 'none') == 'none':
-    c.NotebookApp.base_url = '/ipython/'
-    c.NotebookApp.webapp_settings = {'static_url_prefix': '/ipython/static/'}
-else:
-    c.NotebookApp.base_url = '/ipython/%s/' % os.environ['DOCKER_PORT']
-    c.NotebookApp.webapp_settings = {'static_url_prefix': '/ipython/%s/static/' % os.environ['DOCKER_PORT']}
+c.NotebookApp.base_url = '%s/ipython/' % os.environ.get('PROXY_PREFIX', '')
+c.NotebookApp.webapp_settings = {
+    'static_url_prefix': '%s/ipython/static/' % os.environ.get('PROXY_PREFIX', '')
+}
 
 if os.environ.get('NOTEBOOK_PASSWORD', 'none') != 'none':
     c.NotebookApp.password = os.environ['NOTEBOOK_PASSWORD']

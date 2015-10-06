@@ -39,15 +39,14 @@ Some environment variables are made available to the user which will allow for c
 
 Variable            | Use
 ------------------- | ---
-`GALAXY_WEB_PORT`   | Port on which Galaxy is running, if applicable
-`NOTEBOOK_PASSWORD` | Password with which to secure the notebook
-`CORS_ORIGIN`       | If the notebook is proxied, this is the URL the end-user will see when trying to access a notebook
-`DOCKER_PORT`       | Used in Galaxy Interactive Environments to ensure that proxy routes are unique and accessible
 `API_KEY`           | Galaxy API Key with which to interface with Galaxy
-`HISTORY_ID`        | ID of current Galaxy History, used in easing the dataset upload/download process
-`REMOTE_HOST`       | Unused
-`GALAXY_URL`        | URL at which Galaxy is accessible
+`CORS_ORIGIN`       | If the notebook is proxied, this is the URL the end-user will see when trying to access a notebook
 `DEBUG`             | Enable debugging mode, mostly for developers
+`GALAXY_URL`        | URL at which Galaxy is accessible
+`GALAXY_WEB_PORT`   | Port on which Galaxy is running, if applicable
+`HISTORY_ID`        | ID of current Galaxy History, used in easing the dataset upload/download process
+`NOTEBOOK_PASSWORD` | Password with which to secure the notebook
+`PROXY_PREFIX`      | Prefix to URL which allows Galaxy proxy to share cookies with Galaxy itself.
 
 
 Authors
