@@ -16,6 +16,11 @@
 uid=`stat --printf %u /import`
 gid=`stat --printf %g /import`
 
+if [ ! -f /import/ipython_galaxy_notebook.ipynb ]; then
+    cp /home/ipython/notebook.ipynb /import/ipython_galaxy_notebook.ipynb
+fi
+
+
 if [[ $uid != '1450' ]] && [[ $gid != '1450' ]]; then
 
     [ $(getent group $gid) ] || groupadd -r galaxy -g $gid

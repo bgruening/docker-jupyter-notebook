@@ -43,6 +43,7 @@ ADD ./ipython-profile.py /home/ipython/.ipython/profile_default/startup/00-load.
 ADD ./ipython_notebook_config.py /home/ipython/.ipython/profile_default/ipython_notebook_config.py
 ADD ./custom.js /home/ipython/.ipython/profile_default/static/custom/custom.js
 ADD ./custom.css /home/ipython/.ipython/profile_default/static/custom/custom.css
+ADD ./notebook.ipynb /home/ipython/notebook.ipynb
 
 # Add python module to a special folder for modules we want to be able to load within IPython
 RUN mkdir /home/ipython/py/
