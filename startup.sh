@@ -21,14 +21,14 @@ if [[ $uid != '1450' ]] && [[ $gid != '1450' ]]; then
     [ $(getent group $gid) ] || groupadd -r galaxy -g $gid
     useradd -u $uid -r -g $gid -d /home/ipython -c "IPython user" galaxy
     chown $uid:$gid /home/ipython -R
-    su galaxy -c 'ipython trust /import/ipython_galaxy_notebook.ipynb'
-    su galaxy -c '/monitor_traffic.sh' & 
-    su galaxy -c 'ipython notebook --no-browser'
+    su - galaxy -c 'ipython trust /import/ipython_galaxy_notebook.ipynb'
+    su - galaxy -c '/monitor_traffic.sh' & 
+    su - galaxy -c 'ipython notebook --no-browser'
 
 else
 
-    su ipython -c 'ipython trust /import/ipython_galaxy_notebook.ipynb'
-    su ipython -c '/monitor_traffic.sh' &
-    su ipython -c 'ipython notebook --no-browser'
+    su - ipython -c 'ipython trust /import/ipython_galaxy_notebook.ipynb'
+    su - ipython -c '/monitor_traffic.sh' &
+    su - ipython -c 'ipython notebook --no-browser'
 
 fi
