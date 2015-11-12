@@ -21,6 +21,7 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 && \
 
 ADD ./startup.sh /startup.sh
 ADD ./monitor_traffic.sh /monitor_traffic.sh
+ADD ./get_notebook.py /get_notebook.py
 
 # /import will be the universal mount-point for IPython
 # The Galaxy instance can copy in data that needs to be present to the IPython webserver
@@ -65,10 +66,9 @@ ENV DEBUG=false \
     REMOTE_HOST=none \
     GALAXY_URL=none
 
-RUN chown -R ipython:ipython /home/ipython/
+RUN chown -R ipython:ipython /home/ipython/ /import
 
-VOLUME ["/import/"]
-WORKDIR /import/
+WORKDIR /import
 
 # IPython will run on port 6789, export this port to the host system
 EXPOSE 6789
