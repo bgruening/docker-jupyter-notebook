@@ -13,27 +13,13 @@
 # with the UID 1450 (preconfigured ipython user) or a newly created 'galaxy' user
 # with the same UID/GID as /import.
 
-uid=`stat --printf %u /import`
-gid=`stat --printf %g /import`
+su ipython -c 'python /get_notebook.py'
 
 if [ ! -f /import/ipython_galaxy_notebook.ipynb ]; then
     cp /home/ipython/notebook.ipynb /import/ipython_galaxy_notebook.ipynb
+    chown ipython:ipython /import/ipython_galaxy_notebook.ipynb
 fi
 
-
-if [[ $uid != '1450' ]] && [[ $gid != '1450' ]]; then
-
-    [ $(getent group $gid) ] || groupadd -r galaxy -g $gid
-    useradd -u $uid -r -g $gid -d /home/ipython -c "IPython user" galaxy
-    chown $uid:$gid /home/ipython -R
-    su galaxy -c 'ipython trust /import/ipython_galaxy_notebook.ipynb'
-    su galaxy -c '/monitor_traffic.sh' & 
-    su galaxy -c 'ipython notebook --no-browser'
-
-else
-
-    su ipython -c 'ipython trust /import/ipython_galaxy_notebook.ipynb'
-    su ipython -c '/monitor_traffic.sh' &
-    su ipython -c 'ipython notebook --no-browser'
-
-fi
+su ipython -c 'ipython trust /home/ipython/workdir/ipython_galaxy_notebook.ipynb'
+su ipython -c '/monitor_traffic.sh' &
+su ipython -c 'ipython notebook --no-browser'
