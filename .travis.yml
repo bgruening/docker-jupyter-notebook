@@ -12,6 +12,5 @@ before_install:
     docker run -d -p 8888:8888 jupyter_galaxy
   - docker ps
 
-
 script:
   - curl --fail http://localhost:8888/ipython/notebooks
