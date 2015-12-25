@@ -1,15 +1,12 @@
-Docker IPython Container
+Docker Jupyter Container
 ========================
 
-[![Docker IPython Container](http://dockeri.co/image/bgruening/docker-ipython-notebook)](https://registry.hub.docker.com/u/bgruening/docker-ipython-notebook/)
+[![Docker Jupyter Container](http://dockeri.co/image/bgruening/docker-ipython-notebook)](https://registry.hub.docker.com/u/bgruening/docker-ipython-notebook/)
 
-IPython running in a docker container. This image can be used to integrate IPython into Galaxy.
+Jupyter running in a docker container. This image can be used to integrate Jupyter into Galaxy.
 A variety of different packages are pre-installed and can be used right away.
 
 This docker container is used by the [Galaxy-IPython project](https://github.com/bgruening/galaxy-ipython) and can be installed from the [docker.io index](https://registry.hub.docker.com/u/bgruening/docker-ipython-notebook/).
-
-
-[![DOI](https://zenodo.org/badge/5466/bgruening/docker-ipython-notebook.svg)](https://zenodo.org/badge/latestdoi/5466/bgruening/docker-ipython-notebook)
 
 
 Usage
@@ -19,17 +16,17 @@ Usage
 
  [Docker](https://www.docker.com) is a pre-requirement for this project. You can build the container with:
  ```bash
-  docker build -t ipython-notebook . 
+  docker build -t jupyter-notebook . 
  ```
  The build process can take some time, but if finished you can run your container with:
  ```bash
-  docker run -p 7777:6789 -v /home/user/foo/:/import/ -t ipython-notebook
+  docker run -p 7777:8888 -i -t jupyter-notebook
  ```
- and you will have a running [IPython Notebook](http://ipython.org/notebook.html) instance on ``http://localhost:7777/ipython/``.
+ and you will have a running [Jupyter Notebook](http://jupyter.org) instance on ``http://localhost:7777/ipython/``.
 
 * Run a pre-build image from docker registry
 
- ``docker run -p 7777:6789 -v /home/user/foo/:/import/ bgruening/docker-ipython-notebook ``  
+ ``docker run -p 7777:8888 bgruening/docker-jupyter-notebook ``  
 
 
 Environment Variables
@@ -59,8 +56,7 @@ History
 =======
 
 - v0.1: Initial public release
-- v0.2: Upgrade IPython to version 2.4
-- v0.3: Switch to environment based image configuration. Fix dataset ownership bugs.
+ - with Julia, Bash, Python2/3, Ruby, Haskell and R kernels 
 
 
 Licence (MIT)
