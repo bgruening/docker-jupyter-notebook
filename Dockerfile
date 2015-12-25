@@ -49,7 +49,8 @@ RUN conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy 
 
 # Now for a python2 environment
 RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipykernel numpy pandas scikit-learn \
-    scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt && pip install --no-cache-dir bioblend
+    scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt && \
+    /bin/bash -c "source activate python2 && pip install --no-cache-dir bioblend"
 
 RUN $CONDA_DIR/envs/python2/bin/python \
     $CONDA_DIR/envs/python2/bin/ipython \
