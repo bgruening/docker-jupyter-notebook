@@ -6,9 +6,8 @@ mainly to be overridden in profile/static/custom/custom.css
 This will always be an empty file in IPython
 */
 
-.icon-download-alt {
+#saveToGalaxy {
     color: green;
     text-shadow: 1px 1px 1px #ccc;
-    font-size: 2em;
 }
 

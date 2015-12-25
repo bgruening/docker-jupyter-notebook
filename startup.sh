@@ -10,16 +10,16 @@
 # UID/GID as /import and make everything accessible to this new user.
 #
 # In the end the IPython Server is started as non-privileged user. Either
-# with the UID 1450 (preconfigured ipython user) or a newly created 'galaxy' user
+# with the UID 1450 (preconfigured jupyter user) or a newly created 'galaxy' user
 # with the same UID/GID as /import.
 
-su ipython -c 'python /get_notebook.py'
+python /get_notebook.py
 
 if [ ! -f /import/ipython_galaxy_notebook.ipynb ]; then
-    cp /home/ipython/notebook.ipynb /import/ipython_galaxy_notebook.ipynb
-    chown ipython:ipython /import/ipython_galaxy_notebook.ipynb
+    cp /home/$NB_USER/notebook.ipynb /import/ipython_galaxy_notebook.ipynb
+    chown $NB_USER /import/ipython_galaxy_notebook.ipynb
 fi
 
-su ipython -c 'ipython trust /home/ipython/workdir/ipython_galaxy_notebook.ipynb'
-su ipython -c '/monitor_traffic.sh' &
-su ipython -c 'ipython notebook --no-browser'
+jupyter trust /import/ipython_galaxy_notebook.ipynb
+/monitor_traffic.sh &
+jupyter notebook --no-browser

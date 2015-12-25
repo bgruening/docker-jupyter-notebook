@@ -9,17 +9,11 @@
 # connection open from port 6789, kill the server and herewith the docker container.
 
 while true; do
-    sleep ${DEFAULT_CONTAINER_RUNTIME:-60}
+    sleep ${DEFAULT_CONTAINER_RUNTIME:-120}
 
-    if [ `netstat -t | grep -v CLOSE_WAIT | grep ':6789' | wc -l` -lt 3 ]
+    if [ `netstat -t | grep -v CLOSE_WAIT | grep ':8888' | wc -l` -lt 3 ]
     then
-        pkill ipython
-        # We will create new history elements with all data that is relevant,
-        # this means we can delete everything from /import/
-        if [[ "$DEBUG" == "false" ]];
-        then
-            rm /import/ -rf;
-        fi
+        pkill jupyter
     fi
 
 done

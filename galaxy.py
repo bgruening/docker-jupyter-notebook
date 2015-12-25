@@ -24,7 +24,7 @@ def _get_ip():
     p3 = subprocess.Popen(cmd_awk, stdin=p2.stdout, stdout=subprocess.PIPE)
     galaxy_ip = p3.stdout.read()
     log.debug('Host IP determined to be %s', galaxy_ip)
-    return galaxy_ip
+    return galaxy_ip.strip()
 
 
 def _test_url(url, key, history_id):
@@ -66,6 +66,7 @@ def get_galaxy_connection(history_id=None):
     if gi is not None:
         return gi
 
+
     ### Failover, fully auto-detected URL ###
     # Remove trailing slashes
     app_path = os.environ['GALAXY_URL'].rstrip('/')
@@ -81,7 +82,7 @@ def get_galaxy_connection(history_id=None):
         # conf var: galaxy_paster_port
         galaxy_port = os.environ['GALAXY_WEB_PORT']
 
-    built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip.strip(), galaxy_port, app_path.strip())
+    built_galaxy_url = 'http://%s:%s/%s' %  (galaxy_ip, galaxy_port, app_path.strip())
     url = built_galaxy_url.rstrip('/')
 
     gi = _test_url(url, key, history_id)
@@ -89,7 +90,7 @@ def get_galaxy_connection(history_id=None):
         return gi
 
     ### Fail ###
-    msg = "Could not connect to a galaxy instance. Please contact your SysAdmin for help with this error"
+    msg = "Could not connect to a galaxy instance on %s. Please contact your SysAdmin for help with this error" % url
     raise Exception(msg)
 
 

@@ -1,60 +1,129 @@
-# IPython container used for Galaxy IPython Integration
+# Jupyter container used for Galaxy IPython (+other kernels) Integration
 #
 # VERSION       0.3.0
 
-FROM ubuntu:14.04
+FROM jupyter/minimal-notebook:4.0
 
 MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 && \
-    echo 'deb http://cran.r-project.org/bin/linux/ubuntu trusty/' >> /etc/apt/sources.list && \
-    apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libxml2-dev \
-    apt-transport-https python-dev libc-dev pandoc python-pip pkg-config liblzma-dev libbz2-dev libpcre3-dev \
-    build-essential libblas-dev liblapack-dev gfortran libzmq3-dev curl libyaml-dev \
-    libfreetype6-dev libpng-dev net-tools procps r-base libreadline-dev libffi-dev && \
-    pip install setuptools --upgrade && \
-    pip install pip --upgrade && \
-    pip install --upgrade requests[security] pyzmq ipython==2.4 jinja2 tornado pygments numpy biopython scipy scikit-learn pandas \
-        sklearn-pandas bioblend matplotlib patsy pysam khmer ggplot mpld3 sympy rpy2 dask pyvcf && \
-    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Install system libraries first as root
+USER root
+
+RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libxml2-dev \
+    apt-transport-https python-dev libc-dev pandoc pkg-config liblzma-dev libbz2-dev libpcre3-dev \
+    build-essential libblas-dev liblapack-dev gfortran libzmq3-dev libyaml-dev \
+    libfreetype6-dev libpng-dev net-tools procps libreadline-dev julia wget lynx software-properties-common \
+    # Julia dependencies
+    julia libnettle4 \
+    # R dependencies that conda can't provide (X, fonts, compilers)
+    libxrender1 fonts-dejavu \
+    # IHaskell dependencies
+    zlib1g-dev libzmq3-dev libtinfo-dev libcairo2-dev libpango1.0-dev
+
+# The Glorious Glasgow Haskell Compiler
+RUN add-apt-repository -y ppa:hvr/ghc && \
+    sed -i s/jessie/trusty/g /etc/apt/sources.list.d/hvr-ghc-jessie.list && \
+    apt-get update && apt-get install -y cabal-install-1.22 ghc-7.8.4 happy-1.19.4 alex-3.1.3
+
+# Ruby dependencies
+
+RUN add-apt-repository -y  ppa:brightbox/ruby-ng && \
+    sed -i s/jessie/trusty/g  /etc/apt/sources.list.d/brightbox-ruby-ng-jessie.list && apt-get update
+
+RUN apt-get install -y --no-install-recommends ruby2.2 ruby2.2-dev libtool autoconf automake gnuplot-nox libsqlite3-dev \
+    libatlas-base-dev libgsl0-dev libmagick++-dev imagemagick && \
+    ln -s /usr/bin/libtoolize /usr/bin/libtool && \
+    apt-get clean
+
+RUN gem install --no-rdoc --no-ri sciruby-full 
+
+ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
+
+USER jovyan
+
+# Python packages
+RUN conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy \
+    cython patsy statsmodels cloudpickle dill numba bokeh beautiful-soup && conda clean -yt && pip install --no-cache-dir bioblend
+
+# Now for a python2 environment
+RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipykernel numpy pandas scikit-learn \
+    scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt && pip install --no-cache-dir bioblend
+
+RUN $CONDA_DIR/envs/python2/bin/python \
+    $CONDA_DIR/envs/python2/bin/ipython \
+    kernelspec install-self --user
+
+# IRuby
+RUN iruby register
+
+# R packages
+RUN conda config --add channels r
+RUN conda install --yes r-irkernel r-plyr r-devtools r-rcurl r-dplyr r-ggplot2 \
+    r-caret rpy2 r-tidyr r-shiny r-rmarkdown r-forecast r-stringr r-rsqlite r-reshape2 r-nycflights13 r-randomforest && conda clean -yt
+
+# IJulia and Julia packages
+RUN julia -e 'Pkg.add("IJulia")' && \
+    julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")'
+
+# IHaskell + IHaskell-Widgets + Dependencies for examples
+RUN cabal update && \
+    CURL_CA_BUNDLE='/etc/ssl/certs/ca-certificates.crt' curl 'https://www.stackage.org/lts-2.22/cabal.config?global=true' >> ~/.cabal/config && \
+    cabal install cpphs && \
+    cabal install gtk2hs-buildtools && \
+    cabal install ihaskell-0.8.0.0 --reorder-goals && \
+    cabal install ihaskell-widgets-0.2.2.1 HTTP Chart Chart-cairo && \
+     ~/.cabal/bin/ihaskell install && \
+    rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
+
+
+# Extra Kernels
+RUN pip install --user --no-cache-dir bash_kernel bioblend && \
+    python -m bash_kernel.install
+
 
 ADD ./startup.sh /startup.sh
 ADD ./monitor_traffic.sh /monitor_traffic.sh
 ADD ./get_notebook.py /get_notebook.py
 
-# /import will be the universal mount-point for IPython
-# The Galaxy instance can copy in data that needs to be present to the IPython webserver
-RUN mkdir /import /home/ipython
+USER root
+
+# /import will be the universal mount-point for Jupyter
+# The Galaxy instance can copy in data that needs to be present to the Jupyter webserver
+RUN mkdir /import
+
+#RUN echo 'export PATH=/opt/conda/bin:$PATH' > /home/jupyter/.profile
+#RUN echo 'export PYTHONPATH=/home/jupyter/py/:$PYTHONPATH' >> /home/jupyter/.profile
+
+RUN rm /etc/profile.d/conda.sh
 
 # Create user and group with the same UID and GID as the Galaxy main docker container.
-RUN groupadd -r ipython -g 1450 && \
-    useradd -u 1450 -r -g ipython -d /home/ipython -c "IPython user" ipython && \
-    chown ipython:ipython /home/ipython
+#RUN groupadd -r jupyter -g 1450 && \
+#    useradd -u 1450 -r -g jupyter -d /home/jupyter -c "Jupyter user" jupyter && \
+#    chown jupyter:jupyter /home/jupyter
 
-# Install MathJax locally because it has some problems with https as reported here: https://github.com/bgruening/galaxy-ipython/pull/8
-RUN python -c 'from IPython.external import mathjax; mathjax.install_mathjax("2.5.1")'
-
-# We can get away with just creating this single file and IPython will create the rest of the
+# We can get away with just creating this single file and Jupyter will create the rest of the
 # profile for us.
-RUN mkdir -p /home/ipython/.ipython/profile_default/startup/
-RUN mkdir -p /home/ipython/.ipython/profile_default/static/custom/
+RUN mkdir -p /home/$NB_USER/.ipython/profile_default/startup/
+RUN mkdir -p /home/$NB_USER/.jupyter/custom/
 
-ADD ./ipython-profile.py /home/ipython/.ipython/profile_default/startup/00-load.py
-ADD ./ipython_notebook_config.py /home/ipython/.ipython/profile_default/ipython_notebook_config.py
-ADD ./custom.js /home/ipython/.ipython/profile_default/static/custom/custom.js
-ADD ./custom.css /home/ipython/.ipython/profile_default/static/custom/custom.css
-ADD ./notebook.ipynb /home/ipython/notebook.ipynb
+COPY ./ipython-profile.py /home/$NB_USER/.ipython/profile_default/startup/00-load.py
+#ADD ./ipython_notebook_config.py /home/$NB_USER/.jupyter/jupyter_notebook_config.py
+COPY jupyter_notebook_config.py /home/$NB_USER/.jupyter/
 
-# Add python module to a special folder for modules we want to be able to load within IPython
-RUN mkdir /home/ipython/py/
-ADD ./galaxy.py /home/ipython/py/galaxy.py
-ADD ./put /home/ipython/py/put
-ADD ./get /home/ipython/py/get
+ADD ./custom.js /home/$NB_USER/.jupyter/custom/custom.js
+ADD ./custom.css /home/$NB_USER/.jupyter/custom/custom.css
+ADD ./default_notebook.ipynb /home/$NB_USER/notebook.ipynb
+
+# Add python module to a special folder for modules we want to be able to load within Jupyter
+RUN mkdir /home/$NB_USER/py/
+COPY ./galaxy.py /home/$NB_USER/py/galaxy.py
+COPY ./put /home/$NB_USER/py/put
+COPY ./get /home/$NB_USER/py/get
 # Make sure the system is aware that it can look for python code here
-ENV PYTHONPATH /home/ipython/py/:$PYTHONPATH
-ENV PATH /home/ipython/py/:$PATH
+ENV PYTHONPATH /home/$NB_USER/py/:$PYTHONPATH
+ENV PATH /home/$NB_USER/py/:$PATH
 
 # ENV variables to replace conf file
 ENV DEBUG=false \
@@ -67,12 +136,13 @@ ENV DEBUG=false \
     REMOTE_HOST=none \
     GALAXY_URL=none
 
-RUN chown -R ipython:ipython /home/ipython/ /import
+RUN chown -R $NB_USER:users /home/$NB_USER/ /import
+
+USER jovyan
 
 WORKDIR /import
 
-# IPython will run on port 6789, export this port to the host system
-EXPOSE 6789
+# Jupyter will run on port 8888, export this port to the host system
 
-# Start IPython Notebook
+# Start Jupyter Notebook
 CMD /startup.sh
