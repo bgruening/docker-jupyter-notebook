@@ -1,0 +1,21 @@
+sudo: required
+
+language: python
+python: 2.7
+
+services:
+  - docker
+
+before_install:
+  - docker build -t jupyter_galaxy .
+  - |
+    docker run -d -p 8888:8888 jupyter_galaxy
+  - docker ps
+
+install:
+  - cd $GALAXY_HOME/bioblend-master
+  - sudo su $GALAXY_TRAVIS_USER -c 'python setup.py install --user'
+  - sudo su $GALAXY_TRAVIS_USER -c 'pip install --user --upgrade "tox>=1.8.0"'
+
+script:
+  - curl --fail http://localhost:8888/ipython/notebooks
