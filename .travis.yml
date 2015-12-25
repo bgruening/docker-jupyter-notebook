@@ -13,4 +13,9 @@ before_install:
   - docker ps
 
 script:
-  - curl --fail http://localhost:8888/ipython/notebooks
+  - docker ps
+#  - sleep 20 && curl --fail http://localhost:8888/ipython/notebooks
+
+after_success:
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"'
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && docker push bgruening/docker-jupyter-notebook:${TRAVIS_BRANCH}'
