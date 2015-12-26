@@ -1,13 +1,12 @@
 Docker Jupyter Container
 ========================
 
-[![Docker Jupyter Container](http://dockeri.co/image/bgruening/docker-ipython-notebook)](https://registry.hub.docker.com/u/bgruening/docker-ipython-notebook/)
 
-Jupyter running in a docker container. This image can be used to integrate Jupyter into Galaxy.
-A variety of different packages are pre-installed and can be used right away.
+This [Jupyter](http://jupyter.org/) Docker container is used by the [Galaxy Project](https://galaxyproject.org/) and can be installed from the [docker.io index](https://registry.hub.docker.com/u/bgruening/docker-jupyter-notebook/).
 
-This docker container is used by the [Galaxy-IPython project](https://github.com/bgruening/galaxy-ipython) and can be installed from the [docker.io index](https://registry.hub.docker.com/u/bgruening/docker-ipython-notebook/).
-
+```bash
+docker pull bgruening/docker-jupyter-notebook
+```
 
 Usage
 =====
