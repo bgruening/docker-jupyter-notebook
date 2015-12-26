@@ -1,6 +1,6 @@
 # Jupyter container used for Galaxy IPython (+other kernels) Integration
 #
-# VERSION       0.3.0
+# VERSION   0.1
 
 FROM jupyter/minimal-notebook:4.0
 
@@ -13,31 +13,30 @@ USER root
 
 RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libxml2-dev \
     apt-transport-https python-dev libc-dev pandoc pkg-config liblzma-dev libbz2-dev libpcre3-dev \
-    build-essential libblas-dev liblapack-dev gfortran libzmq3-dev libyaml-dev \
-    libfreetype6-dev libpng-dev net-tools procps libreadline-dev julia wget lynx software-properties-common \
+    build-essential libblas-dev liblapack-dev gfortran libzmq3-dev libyaml-dev libxrender1 fonts-dejavu \
+    libfreetype6-dev libpng-dev net-tools procps libreadline-dev wget software-properties-common \
     # Julia dependencies
     julia libnettle4 \
-    # R dependencies that conda can't provide (X, fonts, compilers)
-    libxrender1 fonts-dejavu \
     # IHaskell dependencies
-    zlib1g-dev libzmq3-dev libtinfo-dev libcairo2-dev libpango1.0-dev
+    zlib1g-dev libtinfo-dev libcairo2-dev libpango1.0-dev && \
+    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# The Glorious Glasgow Haskell Compiler
+# Glasgow Haskell Compiler
 RUN add-apt-repository -y ppa:hvr/ghc && \
     sed -i s/jessie/trusty/g /etc/apt/sources.list.d/hvr-ghc-jessie.list && \
-    apt-get update && apt-get install -y cabal-install-1.22 ghc-7.8.4 happy-1.19.4 alex-3.1.3
+    apt-get update && apt-get install -y cabal-install-1.22 ghc-7.8.4 happy-1.19.4 alex-3.1.3 && \
+    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Ruby dependencies
-
 RUN add-apt-repository -y  ppa:brightbox/ruby-ng && \
-    sed -i s/jessie/trusty/g  /etc/apt/sources.list.d/brightbox-ruby-ng-jessie.list && apt-get update
-
-RUN apt-get install -y --no-install-recommends ruby2.2 ruby2.2-dev libtool autoconf automake gnuplot-nox libsqlite3-dev \
+    sed -i s/jessie/trusty/g  /etc/apt/sources.list.d/brightbox-ruby-ng-jessie.list && apt-get update && \
+    apt-get install -y --no-install-recommends ruby2.2 ruby2.2-dev libtool autoconf automake gnuplot-nox libsqlite3-dev \
     libatlas-base-dev libgsl0-dev libmagick++-dev imagemagick && \
     ln -s /usr/bin/libtoolize /usr/bin/libtool && \
-    apt-get clean
+    apt-get purge -y software-properties-common && \
+    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN gem install --no-rdoc --no-ri sciruby-full 
+RUN gem install --no-rdoc --no-ri rbczmq sciruby-full 
 
 ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
 
@@ -60,8 +59,7 @@ RUN $CONDA_DIR/envs/python2/bin/python \
 RUN iruby register
 
 # R packages
-RUN conda config --add channels r
-RUN conda install --yes r-irkernel r-plyr r-devtools r-rcurl r-dplyr r-ggplot2 \
+RUN conda config --add channels r && conda install --yes r-irkernel r-plyr r-devtools r-rcurl r-dplyr r-ggplot2 \
     r-caret rpy2 r-tidyr r-shiny r-rmarkdown r-forecast r-stringr r-rsqlite r-reshape2 r-nycflights13 r-randomforest && conda clean -yt
 
 # IJulia and Julia packages
@@ -82,7 +80,6 @@ RUN cabal update && \
 # Extra Kernels
 RUN pip install --user --no-cache-dir bash_kernel bioblend && \
     python -m bash_kernel.install
-
 
 ADD ./startup.sh /startup.sh
 ADD ./monitor_traffic.sh /monitor_traffic.sh
