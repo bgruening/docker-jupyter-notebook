@@ -14,7 +14,7 @@ USER root
 RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libxml2-dev \
     apt-transport-https python-dev libc-dev pandoc pkg-config liblzma-dev libbz2-dev libpcre3-dev \
     build-essential libblas-dev liblapack-dev gfortran libzmq3-dev libyaml-dev libxrender1 fonts-dejavu \
-    libfreetype6-dev libpng-dev net-tools procps libreadline-dev wget software-properties-common \
+    libfreetype6-dev libpng-dev net-tools procps libreadline-dev wget software-properties-common octave \
     # Julia dependencies
     julia libnettle4 \
     # IHaskell dependencies
@@ -78,8 +78,10 @@ RUN cabal update && \
 
 
 # Extra Kernels
-RUN pip install --user --no-cache-dir bash_kernel bioblend && \
+RUN pip install --user --no-cache-dir bash_kernel bioblend octave_kernel && \
     python -m bash_kernel.install
+
+
 
 ADD ./startup.sh /startup.sh
 ADD ./monitor_traffic.sh /monitor_traffic.sh
