@@ -9,7 +9,7 @@
 # connection open from port 6789, kill the server and herewith the docker container.
 
 while true; do
-    sleep ${DEFAULT_CONTAINER_RUNTIME:-120}
+    sleep ${DEFAULT_CONTAINER_RUNTIME:-240}
 
     if [ `netstat -t | grep -v CLOSE_WAIT | grep ':8888' | wc -l` -lt 3 ]
     then
