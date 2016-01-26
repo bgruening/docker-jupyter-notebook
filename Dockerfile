@@ -43,11 +43,11 @@ ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/h
 USER jovyan
 
 # Python packages
-RUN conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy \
+RUN conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy rpy2 \
     cython patsy statsmodels cloudpickle dill numba bokeh beautiful-soup && conda clean -yt && pip install --no-cache-dir bioblend
 
 # Now for a python2 environment
-RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipykernel numpy pandas scikit-learn \
+RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipykernel numpy pandas scikit-learn rpy2 \
     scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt && \
     /bin/bash -c "source activate python2 && pip install --no-cache-dir bioblend"
 
