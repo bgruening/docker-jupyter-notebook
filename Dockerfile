@@ -44,11 +44,11 @@ USER jovyan
 
 # Python packages
 RUN conda config --add channels r && conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy rpy2 \
-    cython patsy statsmodels cloudpickle dill numba bokeh beautiful-soup && conda clean -yt && pip install --no-cache-dir bioblend
+    biopython cython patsy statsmodels cloudpickle dill numba bokeh beautiful-soup && conda clean -yt && pip install --no-cache-dir bioblend
 
 # Now for a python2 environment
 RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipykernel numpy pandas scikit-learn rpy2 \
-    scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt && \
+    biopython scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt && \
     /bin/bash -c "source activate python2 && pip install --no-cache-dir bioblend"
 
 RUN $CONDA_DIR/envs/python2/bin/python \
