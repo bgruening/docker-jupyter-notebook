@@ -121,6 +121,8 @@ RUN mkdir /home/$NB_USER/py/
 COPY ./galaxy.py /home/$NB_USER/py/galaxy.py
 COPY ./put /home/$NB_USER/py/put
 COPY ./get /home/$NB_USER/py/get
+RUN chmod +x /home/$NB_USER/py/get /home/$NB_USER/py/put
+
 # Make sure the system is aware that it can look for python code here
 ENV PYTHONPATH /home/$NB_USER/py/:$PYTHONPATH
 ENV PATH /home/$NB_USER/py/:$PATH
