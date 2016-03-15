@@ -78,7 +78,7 @@ RUN cabal update && \
 
 
 # Extra Kernels
-RUN pip install --user --no-cache-dir bash_kernel bioblend octave_kernel && \
+RUN pip install --user --no-cache-dir bash_kernel bioblend octave_kernel galaxy-ie-helpers && \
     python -m bash_kernel.install
 
 
