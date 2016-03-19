@@ -116,17 +116,6 @@ ADD ./custom.js /home/$NB_USER/.jupyter/custom/custom.js
 ADD ./custom.css /home/$NB_USER/.jupyter/custom/custom.css
 ADD ./default_notebook.ipynb /home/$NB_USER/notebook.ipynb
 
-# Add python module to a special folder for modules we want to be able to load within Jupyter
-RUN mkdir /home/$NB_USER/py/
-COPY ./galaxy.py /home/$NB_USER/py/galaxy.py
-COPY ./put /home/$NB_USER/py/put
-COPY ./get /home/$NB_USER/py/get
-RUN chmod +x /home/$NB_USER/py/get /home/$NB_USER/py/put
-
-# Make sure the system is aware that it can look for python code here
-ENV PYTHONPATH /home/$NB_USER/py/:$PYTHONPATH
-ENV PATH /home/$NB_USER/py/:$PATH
-
 # ENV variables to replace conf file
 ENV DEBUG=false \
     GALAXY_WEB_PORT=10000 \
