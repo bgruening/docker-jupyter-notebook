@@ -12,6 +12,8 @@ before_install:
 
 script:
   - docker ps
+  # testing the get/put helper scripts
+  - docker run -i -t bgruening/docker-jupyter-notebook get --help
 #  - sleep 20 && curl --fail http://localhost:8888/ipython/notebooks
 
 after_success:
