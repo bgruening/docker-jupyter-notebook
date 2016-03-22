@@ -79,9 +79,9 @@ RUN cabal update && \
 
 # Extra Kernels
 RUN pip install --user --no-cache-dir bash_kernel bioblend octave_kernel galaxy-ie-helpers && \
-    python -m bash_kernel.install
-
-
+    python -m bash_kernel.install && \
+    # add galaxy-ie-helpers to PATH
+    echo 'export PATH=/home/jovyan/.local/bin:$PATH' >> /home/jovyan/.bashrc 
 
 ADD ./startup.sh /startup.sh
 ADD ./monitor_traffic.sh /monitor_traffic.sh

@@ -12,8 +12,10 @@ before_install:
 
 script:
   - docker ps
+  # testing the get/put helper scripts
+  - docker run -i -t bgruening/docker-jupyter-notebook python -c 'import galaxy_ie_helpers'
 #  - sleep 20 && curl --fail http://localhost:8888/ipython/notebooks
 
-after_success:
-  - if [[ $TRAVIS_PULL_REQUEST -eq "false" ]]; then docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"; fi
-  - if [[ $TRAVIS_PULL_REQUEST -eq "false" ]]; then docker tag -f bgruening/docker-jupyter-notebook bgruening/docker-jupyter-notebook:${TRAVIS_TAG:-$TRAVIS_BRANCH}; docker push bgruening/docker-jupyter-notebook:${TRAVIS_TAG:-$TRAVIS_BRANCH}; fi
+#after_success:
+#  - if [[ $TRAVIS_PULL_REQUEST -eq "false" ]]; then docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"; fi
+#  - if [[ $TRAVIS_PULL_REQUEST -eq "false" ]]; then docker tag -f bgruening/docker-jupyter-notebook bgruening/docker-jupyter-notebook:${TRAVIS_TAG:-$TRAVIS_BRANCH}; docker push bgruening/docker-jupyter-notebook:${TRAVIS_TAG:-$TRAVIS_BRANCH}; fi
