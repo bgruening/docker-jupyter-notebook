@@ -49,7 +49,7 @@ RUN conda config --add channels r && conda install --yes numpy pandas scikit-lea
 # Now for a python2 environment
 RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipykernel numpy pandas scikit-learn rpy2 \
     biopython scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt && \
-    /bin/bash -c "source activate python2 && pip install --no-cache-dir bioblend"
+    /bin/bash -c "source activate python2 && pip install --no-cache-dir bioblend galaxy-ie-helpers"
 
 RUN $CONDA_DIR/envs/python2/bin/python \
     $CONDA_DIR/envs/python2/bin/ipython \
