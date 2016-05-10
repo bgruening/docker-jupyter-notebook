@@ -1,3 +1,9 @@
+[![Build Status](https://travis-ci.org/bgruening/docker-jupyter-notebook.svg?branch=master)](https://travis-ci.org/bgruening/docker-jupyter-notebook)
+[![Docker Repository on Quay](https://quay.io/repository/bgruening/docker-jupyter-notebook/status "Docker Repository on Quay")](https://quay.io/repository/bgruening/docker-jupyter-notebook)
+[![DOI](https://zenodo.org/badge/5466/bgruening/docker-jupyter-notebook.svg)](https://zenodo.org/badge/latestdoi/5466/bgruening/docker-jupyter-notebook)
+
+
+
 Docker Jupyter Container
 ========================
 
