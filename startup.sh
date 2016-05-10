@@ -13,6 +13,8 @@
 # with the UID 1450 (preconfigured jupyter user) or a newly created 'galaxy' user
 # with the same UID/GID as /import.
 
+export PATH=/home/jovyan/.local/bin:$PATH
+
 python /get_notebook.py
 
 if [ ! -f /import/ipython_galaxy_notebook.ipynb ]; then
