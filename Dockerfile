@@ -18,7 +18,7 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-op
     # Julia dependencies
     julia libnettle4 \
     # IHaskell dependencies
-    zlib1g-dev libtinfo-dev libcairo2-dev libpango1.0-dev && \
+    zlib1g-dev libtinfo-dev libcairo2-dev libpango1.0-dev > /dev/null && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Glasgow Haskell Compiler
@@ -44,11 +44,11 @@ USER jovyan
 
 # Python packages
 RUN conda config --add channels r && conda install --yes numpy pandas scikit-learn tensorflow scikit-image matplotlib scipy seaborn sympy rpy2 \
-    biopython cython patsy statsmodels cloudpickle dill numba bokeh h5py beautiful-soup && conda clean -yt > /dev/null && pip install --no-cache-dir bioblend > /dev/null
+    biopython cython patsy statsmodels cloudpickle dill numba bokeh h5py beautiful-soup > /dev/null && conda clean -yt && pip install --no-cache-dir bioblend > /dev/null
 
 # Now for a python2 environment
 RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipykernel numpy pandas scikit-learn tensorflow rpy2 \
-    biopython scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh h5py && conda clean -yt > /dev/null && \
+    biopython scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh h5py > /dev/null && conda clean -yt && \
     /bin/bash -c "source activate python2 && pip install --no-cache-dir bioblend galaxy-ie-helpers > /dev/null"
 
 RUN $CONDA_DIR/envs/python2/bin/python \
@@ -60,7 +60,7 @@ RUN iruby register
 
 # R packages
 RUN conda config --add channels r && conda install --yes r-irkernel r-plyr r-devtools r-rcurl r-dplyr r-ggplot2 \
-    r-caret rpy2 r-tidyr r-shiny r-rmarkdown r-forecast r-stringr r-rsqlite r-reshape2 r-nycflights13 r-randomforest && conda clean -yt > /dev/null
+    r-caret rpy2 r-tidyr r-shiny r-rmarkdown r-forecast r-stringr r-rsqlite r-reshape2 r-nycflights13 r-randomforest > /dev/null && conda clean -yt
 
 # IJulia and Julia packages
 RUN julia -e 'Pkg.add("IJulia")' && \
