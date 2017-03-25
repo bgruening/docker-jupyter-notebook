@@ -1,8 +1,8 @@
 # Jupyter container used for Galaxy IPython (+other kernels) Integration
 #
-# VERSION   0.1
+# VERSION   0.2
 
-FROM jupyter/minimal-notebook:4.0
+FROM jupyter/datascience-notebook:c33a7dc0eece
 
 MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
@@ -43,12 +43,12 @@ ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/h
 USER jovyan
 
 # Python packages
-RUN conda config --add channels r && conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy rpy2 \
-    biopython cython patsy statsmodels cloudpickle dill numba bokeh beautiful-soup && conda clean -yt && pip install --no-cache-dir bioblend
+RUN conda config --add channels r && conda install --yes biopython rpy2 \
+    cython patsy statsmodels cloudpickle dill && conda clean -yt && pip install --no-cache-dir bioblend galaxy-ie-helpers
 
 # Now for a python2 environment
-RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipykernel numpy pandas scikit-learn rpy2 \
-    biopython scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt && \
+RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipykernel biopython rpy2 \
+    cython patsy statsmodels cloudpickle dill && conda clean -yt && \
     /bin/bash -c "source activate python2 && pip install --no-cache-dir bioblend galaxy-ie-helpers"
 
 RUN $CONDA_DIR/envs/python2/bin/python \
@@ -59,12 +59,10 @@ RUN $CONDA_DIR/envs/python2/bin/python \
 RUN iruby register
 
 # R packages
-RUN conda config --add channels r && conda install --yes r-irkernel r-plyr r-devtools r-rcurl r-dplyr r-ggplot2 \
-    r-caret rpy2 r-tidyr r-shiny r-rmarkdown r-forecast r-stringr r-rsqlite r-reshape2 r-nycflights13 r-randomforest && conda clean -yt
-
-# IJulia and Julia packages
-RUN julia -e 'Pkg.add("IJulia")' && \
-    julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")'
+RUN conda config --add channels r && \
+    conda install --quiet --yes \
+        'r-dplyr r-ggplot2 r-tidyr r-stringr' && \
+    conda clean -tipsy
 
 # IHaskell + IHaskell-Widgets + Dependencies for examples
 RUN cabal update && \
@@ -98,10 +96,6 @@ RUN mkdir /import
 
 RUN rm /etc/profile.d/conda.sh
 
-# Create user and group with the same UID and GID as the Galaxy main docker container.
-#RUN groupadd -r jupyter -g 1450 && \
-#    useradd -u 1450 -r -g jupyter -d /home/jupyter -c "Jupyter user" jupyter && \
-#    chown jupyter:jupyter /home/jupyter
 
 # We can get away with just creating this single file and Jupyter will create the rest of the
 # profile for us.
