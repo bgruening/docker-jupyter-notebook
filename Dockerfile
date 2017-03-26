@@ -22,10 +22,10 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-op
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Glasgow Haskell Compiler
-RUN add-apt-repository -y ppa:hvr/ghc && \
-    sed -i s/jessie/trusty/g /etc/apt/sources.list.d/hvr-ghc-jessie.list && \
-    apt-get update && apt-get install -y cabal-install-1.22 ghc-7.8.4 happy-1.19.4 alex-3.1.3 && \
-    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+#RUN add-apt-repository -y ppa:hvr/ghc && \
+#    sed -i s/jessie/trusty/g /etc/apt/sources.list.d/hvr-ghc-jessie.list && \
+#    apt-get update && apt-get install -y cabal-install-1.22 ghc-7.8.4 happy-1.19.4 alex-3.1.3 && \
+#    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Ruby dependencies
 RUN add-apt-repository -y  ppa:brightbox/ruby-ng && \
@@ -57,14 +57,14 @@ RUN conda install --quiet --yes -n python2 ipykernel biopython rpy2 \
 RUN iruby register
 
 # IHaskell + IHaskell-Widgets + Dependencies for examples
-RUN cabal update && \
-    CURL_CA_BUNDLE='/etc/ssl/certs/ca-certificates.crt' curl 'https://www.stackage.org/lts-2.22/cabal.config?global=true' >> ~/.cabal/config && \
-    cabal install cpphs && \
-    cabal install gtk2hs-buildtools && \
-    cabal install ihaskell-0.8.0.0 --reorder-goals && \
-    cabal install ihaskell-widgets-0.2.2.1 HTTP Chart Chart-cairo && \
-     ~/.cabal/bin/ihaskell install && \
-    rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
+#RUN cabal update && \
+#    CURL_CA_BUNDLE='/etc/ssl/certs/ca-certificates.crt' curl 'https://www.stackage.org/lts-2.22/cabal.config?global=true' >> ~/.cabal/config && \
+#    cabal install cpphs && \
+#    cabal install gtk2hs-buildtools && \
+#    cabal install ihaskell-0.8.0.0 --reorder-goals && \
+#    cabal install ihaskell-widgets-0.2.2.1 HTTP Chart Chart-cairo && \
+#     ~/.cabal/bin/ihaskell install && \
+#    rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
 
 
 # Extra Kernels
