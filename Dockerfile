@@ -47,23 +47,16 @@ RUN conda config --add channels r && conda install --yes biopython rpy2 \
     cython patsy statsmodels cloudpickle dill && conda clean -yt && pip install --no-cache-dir bioblend galaxy-ie-helpers
 
 # Now for a python2 environment
-RUN source activate $CONDA_DIR/envs/python2 && \
+RUN /bin/bash -c "source activate python2 && \
     conda install ipykernel biopython rpy2 \
     cython patsy statsmodels cloudpickle dill && conda clean -yt && \
-    /bin/bash -c "source activate python2 && pip install --no-cache-dir bioblend galaxy-ie-helpers"
+    pip install --no-cache-dir bioblend galaxy-ie-helpers"
 
 RUN $CONDA_DIR/envs/python2/bin/python \
-    $CONDA_DIR/envs/python2/bin/ipython \
-    kernelspec install-self --user
+    $CONDA_DIR/envs/python2/bin/ipython kernel install --user
 
 # IRuby
 RUN iruby register
-
-# R packages
-RUN conda config --add channels r && \
-    conda install --quiet --yes \
-        'r-dplyr r-ggplot2 r-tidyr r-stringr' && \
-    conda clean -tipsy
 
 # IHaskell + IHaskell-Widgets + Dependencies for examples
 RUN cabal update && \
@@ -77,7 +70,8 @@ RUN cabal update && \
 
 
 # Extra Kernels
-RUN pip install --user --no-cache-dir bash_kernel bioblend octave_kernel galaxy-ie-helpers && \
+RUN pip install --upgrade pip && \
+    pip install --user --no-cache-dir bash_kernel bioblend octave_kernel galaxy-ie-helpers && \
     python -m bash_kernel.install && \
     # add galaxy-ie-helpers to PATH
     echo 'export PATH=/home/jovyan/.local/bin:$PATH' >> /home/jovyan/.bashrc 
@@ -91,11 +85,6 @@ USER root
 # /import will be the universal mount-point for Jupyter
 # The Galaxy instance can copy in data that needs to be present to the Jupyter webserver
 RUN mkdir /import
-
-#RUN echo 'export PATH=/opt/conda/bin:$PATH' > /home/jupyter/.profile
-#RUN echo 'export PYTHONPATH=/home/jupyter/py/:$PYTHONPATH' >> /home/jupyter/.profile
-
-RUN rm /etc/profile.d/conda.sh
 
 
 # We can get away with just creating this single file and Jupyter will create the rest of the
