@@ -1,8 +1,8 @@
 # Jupyter container used for Galaxy IPython (+other kernels) Integration
 #
-# VERSION   0.1
+# VERSION   0.2
 
-FROM jupyter/minimal-notebook:4.0
+FROM jupyter/datascience-notebook:c33a7dc0eece
 
 MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
@@ -22,10 +22,10 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-op
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Glasgow Haskell Compiler
-RUN add-apt-repository -y ppa:hvr/ghc && \
-    sed -i s/jessie/trusty/g /etc/apt/sources.list.d/hvr-ghc-jessie.list && \
-    apt-get update && apt-get install -y cabal-install-1.22 ghc-7.8.4 happy-1.19.4 alex-3.1.3 && \
-    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+#RUN add-apt-repository -y ppa:hvr/ghc && \
+#    sed -i s/jessie/trusty/g /etc/apt/sources.list.d/hvr-ghc-jessie.list && \
+#    apt-get update && apt-get install -y cabal-install-1.22 ghc-7.8.4 happy-1.19.4 alex-3.1.3 && \
+#    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Ruby dependencies
 RUN add-apt-repository -y  ppa:brightbox/ruby-ng && \
@@ -43,42 +43,34 @@ ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/h
 USER jovyan
 
 # Python packages
-RUN conda config --add channels r && conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy rpy2 \
-    biopython cython patsy statsmodels cloudpickle dill numba bokeh beautiful-soup && conda clean -yt && pip install --no-cache-dir bioblend
+RUN conda config --add channels r && conda install --yes --quiet biopython rpy2 \
+    cython patsy statsmodels cloudpickle dill tensorflow=1.0* && conda clean -yt && \
+    pip install --no-cache-dir bioblend galaxy-ie-helpers
 
 # Now for a python2 environment
-RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipykernel numpy pandas scikit-learn rpy2 \
-    biopython scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt && \
-    /bin/bash -c "source activate python2 && pip install --no-cache-dir bioblend galaxy-ie-helpers"
-
-RUN $CONDA_DIR/envs/python2/bin/python \
-    $CONDA_DIR/envs/python2/bin/ipython \
-    kernelspec install-self --user
+RUN conda install --quiet --yes -n python2 ipykernel biopython rpy2 \
+    cython patsy statsmodels cloudpickle dill tensorflow=1.0* && conda clean -yt && \
+    pip install --no-cache-dir bioblend galaxy-ie-helpers && \
+    $CONDA_DIR/envs/python2/bin/python \
+    $CONDA_DIR/envs/python2/bin/ipython kernel install --user
 
 # IRuby
 RUN iruby register
 
-# R packages
-RUN conda config --add channels r && conda install --yes r-irkernel r-plyr r-devtools r-rcurl r-dplyr r-ggplot2 \
-    r-caret rpy2 r-tidyr r-shiny r-rmarkdown r-forecast r-stringr r-rsqlite r-reshape2 r-nycflights13 r-randomforest && conda clean -yt
-
-# IJulia and Julia packages
-RUN julia -e 'Pkg.add("IJulia")' && \
-    julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")'
-
 # IHaskell + IHaskell-Widgets + Dependencies for examples
-RUN cabal update && \
-    CURL_CA_BUNDLE='/etc/ssl/certs/ca-certificates.crt' curl 'https://www.stackage.org/lts-2.22/cabal.config?global=true' >> ~/.cabal/config && \
-    cabal install cpphs && \
-    cabal install gtk2hs-buildtools && \
-    cabal install ihaskell-0.8.0.0 --reorder-goals && \
-    cabal install ihaskell-widgets-0.2.2.1 HTTP Chart Chart-cairo && \
-     ~/.cabal/bin/ihaskell install && \
-    rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
+#RUN cabal update && \
+#    CURL_CA_BUNDLE='/etc/ssl/certs/ca-certificates.crt' curl 'https://www.stackage.org/lts-2.22/cabal.config?global=true' >> ~/.cabal/config && \
+#    cabal install cpphs && \
+#    cabal install gtk2hs-buildtools && \
+#    cabal install ihaskell-0.8.0.0 --reorder-goals && \
+#    cabal install ihaskell-widgets-0.2.2.1 HTTP Chart Chart-cairo && \
+#     ~/.cabal/bin/ihaskell install && \
+#    rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
 
 
 # Extra Kernels
-RUN pip install --user --no-cache-dir bash_kernel bioblend octave_kernel galaxy-ie-helpers && \
+RUN pip install --upgrade pip && \
+    pip install --user --no-cache-dir bash_kernel bioblend octave_kernel galaxy-ie-helpers && \
     python -m bash_kernel.install && \
     # add galaxy-ie-helpers to PATH
     echo 'export PATH=/home/jovyan/.local/bin:$PATH' >> /home/jovyan/.bashrc 
@@ -93,15 +85,6 @@ USER root
 # The Galaxy instance can copy in data that needs to be present to the Jupyter webserver
 RUN mkdir /import
 
-#RUN echo 'export PATH=/opt/conda/bin:$PATH' > /home/jupyter/.profile
-#RUN echo 'export PYTHONPATH=/home/jupyter/py/:$PYTHONPATH' >> /home/jupyter/.profile
-
-RUN rm /etc/profile.d/conda.sh
-
-# Create user and group with the same UID and GID as the Galaxy main docker container.
-#RUN groupadd -r jupyter -g 1450 && \
-#    useradd -u 1450 -r -g jupyter -d /home/jupyter -c "Jupyter user" jupyter && \
-#    chown jupyter:jupyter /home/jupyter
 
 # We can get away with just creating this single file and Jupyter will create the rest of the
 # profile for us.
