@@ -15,8 +15,6 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-op
     apt-transport-https python-dev libc-dev pandoc pkg-config liblzma-dev libbz2-dev libpcre3-dev \
     build-essential libblas-dev liblapack-dev gfortran libzmq3-dev libyaml-dev libxrender1 fonts-dejavu \
     libfreetype6-dev libpng-dev net-tools procps libreadline-dev wget software-properties-common octave \
-    # Julia dependencies
-    julia libnettle4 \
     # IHaskell dependencies
     zlib1g-dev libtinfo-dev libcairo2-dev libpango1.0-dev && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
