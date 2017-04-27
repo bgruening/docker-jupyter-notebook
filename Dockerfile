@@ -48,9 +48,8 @@ RUN conda config --add channels r && conda install --yes --quiet biopython rpy2 
 # Now for a python2 environment
 RUN conda install --quiet --yes -p $CONDA_DIR/envs/python2 ipykernel biopython rpy2 \
     cython patsy statsmodels cloudpickle dill tensorflow=1.0* && conda clean -yt && \
-    pip install --no-cache-dir bioblend galaxy-ie-helpers && \
-    $CONDA_DIR/envs/python2/bin/python \
-    $CONDA_DIR/envs/python2/bin/ipython kernel install --user
+    conda activate $CONDA_DIR/envs/python2 && \
+    pip install --no-cache-dir bioblend galaxy-ie-helpers
 
 # IRuby
 RUN iruby register
