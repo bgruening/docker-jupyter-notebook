@@ -18,21 +18,11 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-op
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Glasgow Haskell Compiler
-#RUN add-apt-repository -y ppa:hvr/ghc && \
-#    sed -i s/jessie/trusty/g /etc/apt/sources.list.d/hvr-ghc-jessie.list && \
-#    apt-get update && apt-get install -y cabal-install-1.22 ghc-7.8.4 happy-1.19.4 alex-3.1.3 && \
-#    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Ruby dependencies
-RUN add-apt-repository -y  ppa:brightbox/ruby-ng && \
-    sed -i s/jessie/trusty/g  /etc/apt/sources.list.d/brightbox-ruby-ng-jessie.list && apt-get update && \
-    apt-get install -y --no-install-recommends ruby2.2 ruby2.2-dev libtool autoconf automake gnuplot-nox libsqlite3-dev \
-    libatlas-base-dev libgsl0-dev libmagick++-dev imagemagick && \
-    ln -s /usr/bin/libtoolize /usr/bin/libtool && \
-    apt-get purge -y software-properties-common && \
+RUN add-apt-repository -y ppa:hvr/ghc && \
+    sed -i s/jessie/trusty/g /etc/apt/sources.list.d/hvr-ghc-jessie.list && \
+    apt-get update && apt-get install -y cabal-install-1.22 ghc-7.8.4 happy-1.19.4 alex-3.1.3 && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN gem install --no-rdoc --no-ri rbczmq sciruby-full 
 
 ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
 
@@ -48,18 +38,16 @@ RUN /bin/bash -c "source activate python2 && conda install --quiet --yes biopyth
     cython patsy statsmodels cloudpickle dill tensorflow=1.0* && conda clean -yt && \
     pip install --no-cache-dir bioblend galaxy-ie-helpers"
 
-# IRuby
-RUN iruby register
 
 # IHaskell + IHaskell-Widgets + Dependencies for examples
-#RUN cabal update && \
-#    CURL_CA_BUNDLE='/etc/ssl/certs/ca-certificates.crt' curl 'https://www.stackage.org/lts-2.22/cabal.config?global=true' >> ~/.cabal/config && \
-#    cabal install cpphs && \
-#    cabal install gtk2hs-buildtools && \
-#    cabal install ihaskell-0.8.0.0 --reorder-goals && \
-#    cabal install ihaskell-widgets-0.2.2.1 HTTP Chart Chart-cairo && \
-#     ~/.cabal/bin/ihaskell install && \
-#    rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
+RUN cabal update && \
+    CURL_CA_BUNDLE='/etc/ssl/certs/ca-certificates.crt' curl 'https://www.stackage.org/lts-2.22/cabal.config?global=true' >> ~/.cabal/config && \
+    cabal install cpphs && \
+    cabal install gtk2hs-buildtools && \
+    cabal install ihaskell-0.8.0.0 --reorder-goals && \
+    cabal install ihaskell-widgets-0.2.2.1 HTTP Chart Chart-cairo && \
+     ~/.cabal/bin/ihaskell install && \
+    rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
 
 
 # Extra Kernels
