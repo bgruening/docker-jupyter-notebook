@@ -40,12 +40,12 @@ USER jovyan
 
 # Python packages
 RUN conda config --add channels r && conda install --yes --quiet biopython rpy2 \
-    cython patsy statsmodels cloudpickle dill tensorflow=1.0* r-xml && conda clean -yt && \
+    cython patsy statsmodels cloudpickle dill tensorflow=1.1* r-xml && conda clean -yt && \
     pip install --no-cache-dir bioblend galaxy-ie-helpers
 
 # Now for a python2 environment
 RUN /bin/bash -c "source activate python2 && conda install --quiet --yes biopython rpy2 \
-    cython patsy statsmodels cloudpickle dill tensorflow=1.0* && conda clean -yt && \
+    cython patsy statsmodels cloudpickle dill tensorflow=1.1* && conda clean -yt && \
     pip install --no-cache-dir bioblend galaxy-ie-helpers"
 
 # IRuby
