@@ -30,9 +30,8 @@ RUN add-apt-repository -y  ppa:brightbox/ruby-ng && \
     libatlas-base-dev libgsl0-dev libmagick++-dev imagemagick && \
     ln -s /usr/bin/libtoolize /usr/bin/libtool && \
     apt-get purge -y software-properties-common && \
-    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-RUN gem install --no-rdoc --no-ri rbczmq sciruby-full 
+    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    gem install --no-rdoc --no-ri rbczmq sciruby-full 
 
 ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
 
@@ -43,13 +42,11 @@ RUN conda config --add channels r && conda install --yes --quiet biopython rpy2 
     cython patsy statsmodels cloudpickle dill tensorflow=1.1* r-xml && conda clean -yt && \
     pip install --no-cache-dir bioblend galaxy-ie-helpers
 
-# Now for a python2 environment
+# Now for a python2 environment and IRuby
 RUN /bin/bash -c "source activate python2 && conda install --quiet --yes biopython rpy2 \
     cython patsy statsmodels cloudpickle dill tensorflow=1.1* && conda clean -yt && \
-    pip install --no-cache-dir bioblend galaxy-ie-helpers"
-
-# IRuby
-RUN iruby register
+    pip install --no-cache-dir bioblend galaxy-ie-helpers" && \
+    iruby register
 
 # IHaskell + IHaskell-Widgets + Dependencies for examples
 #RUN cabal update && \
@@ -77,13 +74,9 @@ USER root
 
 # /import will be the universal mount-point for Jupyter
 # The Galaxy instance can copy in data that needs to be present to the Jupyter webserver
-RUN mkdir /import
-
-
 # We can get away with just creating this single file and Jupyter will create the rest of the
 # profile for us.
-RUN mkdir -p /home/$NB_USER/.ipython/profile_default/startup/
-RUN mkdir -p /home/$NB_USER/.jupyter/custom/
+RUN mkdir -p /import /home/$NB_USER/.ipython/profile_default/startup/ /home/$NB_USER/.jupyter/custom/
 
 COPY ./ipython-profile.py /home/$NB_USER/.ipython/profile_default/startup/00-load.py
 #ADD ./ipython_notebook_config.py /home/$NB_USER/.jupyter/jupyter_notebook_config.py
