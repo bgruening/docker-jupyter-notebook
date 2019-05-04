@@ -24,15 +24,15 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-op
 #    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Ruby dependencies
-RUN add-apt-repository -y  ppa:brightbox/ruby-ng && \
-    sed -i s/jessie/trusty/g  /etc/apt/sources.list.d/brightbox-ruby-ng-jessie.list && apt-get update && \
-    apt-get install -y --no-install-recommends ruby2.2 ruby2.2-dev libtool autoconf automake gnuplot-nox libsqlite3-dev \
-    libatlas-base-dev libgsl0-dev libmagick++-dev imagemagick && \
-    ln -s /usr/bin/libtoolize /usr/bin/libtool && \
-    apt-get purge -y software-properties-common && \
-    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+#RUN add-apt-repository -y  ppa:brightbox/ruby-ng && \
+#    sed -i s/jessie/trusty/g  /etc/apt/sources.list.d/brightbox-ruby-ng-jessie.list && apt-get update && \
+#    apt-get install -y --no-install-recommends ruby2.2 ruby2.2-dev libtool autoconf automake gnuplot-nox libsqlite3-dev \
+#    libatlas-base-dev libgsl0-dev libmagick++-dev imagemagick && \
+#    ln -s /usr/bin/libtoolize /usr/bin/libtool && \
+#    apt-get purge -y software-properties-common && \
+#    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN gem install --no-rdoc --no-ri rbczmq sciruby-full 
+#RUN gem install --no-rdoc --no-ri rbczmq sciruby-full 
 
 ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
 
@@ -49,7 +49,7 @@ RUN /bin/bash -c "source activate python2 && conda install --quiet --yes biopyth
     pip install --no-cache-dir bioblend galaxy-ie-helpers"
 
 # IRuby
-RUN iruby register
+#RUN iruby register
 
 # IHaskell + IHaskell-Widgets + Dependencies for examples
 #RUN cabal update && \
@@ -63,11 +63,11 @@ RUN iruby register
 
 
 # Extra Kernels
-RUN pip install --upgrade pip && \
-    pip install --user --no-cache-dir bash_kernel bioblend octave_kernel galaxy-ie-helpers && \
-    python -m bash_kernel.install && \
-    # add galaxy-ie-helpers to PATH
-    echo 'export PATH=/home/jovyan/.local/bin:$PATH' >> /home/jovyan/.bashrc 
+#RUN pip install --upgrade pip && \
+#    pip install --user --no-cache-dir bash_kernel bioblend octave_kernel galaxy-ie-helpers && \
+#    python -m bash_kernel.install && \
+#    # add galaxy-ie-helpers to PATH
+#    echo 'export PATH=/home/jovyan/.local/bin:$PATH' >> /home/jovyan/.bashrc 
 
 ADD ./startup.sh /startup.sh
 ADD ./monitor_traffic.sh /monitor_traffic.sh
@@ -104,7 +104,7 @@ ENV DEBUG=false \
     REMOTE_HOST=none \
     GALAXY_URL=none
 
-RUN chown -R $NB_USER:users /home/$NB_USER/ /import
+RUN mkdir /export/ && chown -R $NB_USER:users /home/$NB_USER/ /import /export/
 
 USER jovyan
 
