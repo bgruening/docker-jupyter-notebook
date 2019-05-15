@@ -8,6 +8,8 @@ RUN pip install --user --no-cache-dir bioblend galaxy-ie-helpers
 
 USER root
 
+RUN apt-get update && apt-get install -y net-tools && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 # /import will be the universal mount-point for Jupyter
 # The Galaxy instance can copy in data that needs to be present to the Jupyter webserver
 RUN mkdir /import
