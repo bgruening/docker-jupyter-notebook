@@ -39,14 +39,9 @@ ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/h
 USER jovyan
 
 # Python packages
-RUN conda config --add channels r && conda install --yes --quiet biopython rpy2 \
+RUN conda install --yes --quiet biopython rpy2 \
     cython patsy statsmodels cloudpickle dill tensorflow r-xml && conda clean -yt && \
     pip install --no-cache-dir bioblend galaxy-ie-helpers
-
-# Now for a python2 environment
-RUN /bin/bash -c "source activate python2 && conda install --quiet --yes biopython rpy2 \
-    cython patsy statsmodels cloudpickle dill tensorflow=1.1* && conda clean -yt && \
-    pip install --no-cache-dir bioblend galaxy-ie-helpers"
 
 # IRuby
 #RUN iruby register
