@@ -1,6 +1,6 @@
 # Jupyter container used for Galaxy IPython (+other kernels) Integration
 
-FROM jupyter/datascience-notebook:628fbcb24afd
+FROM jupyter/datascience-notebook:82d1d0bf0867
 
 MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
@@ -34,19 +34,27 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-op
 
 #RUN gem install --no-rdoc --no-ri rbczmq sciruby-full 
 
-ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
+#ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
 
 USER jovyan
 
 # Python packages
-RUN conda config --add channels r && conda install --yes --quiet biopython rpy2 \
-    cython patsy statsmodels cloudpickle dill tensorflow=1.1* r-xml && conda clean -yt && \
+RUN conda config --add channels conda-forge && \
+    conda config --add channels bioconda && \
+    conda install --yes --quiet \
+    biopython \
+    rpy2 \
+    bash_kernel \
+    octave_kernel \
+    # Scala
+    spylon-kernel \
+    # Java
+    scijava-jupyter-kernel \
+    # ansible
+    ansible-kernel \
+    ##fortran_kernel \
+    cython patsy statsmodels cloudpickle dill tensorflow r-xml && conda clean -yt && \
     pip install --no-cache-dir bioblend galaxy-ie-helpers
-
-# Now for a python2 environment
-RUN /bin/bash -c "source activate python2 && conda install --quiet --yes biopython rpy2 \
-    cython patsy statsmodels cloudpickle dill tensorflow=1.1* && conda clean -yt && \
-    pip install --no-cache-dir bioblend galaxy-ie-helpers"
 
 # IRuby
 #RUN iruby register
