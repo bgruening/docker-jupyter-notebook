@@ -114,7 +114,7 @@ ENV DEBUG=false \
 
 RUN mkdir /export/ && chown -R $NB_USER:users /home/$NB_USER/ /import /export/
 
-USER jovyan
+##USER jovyan
 
 WORKDIR /import
 
