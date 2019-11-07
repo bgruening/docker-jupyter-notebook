@@ -13,6 +13,7 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-op
     apt-transport-https python-dev libc-dev pandoc pkg-config liblzma-dev libbz2-dev libpcre3-dev \
     build-essential libblas-dev liblapack-dev gfortran libzmq3-dev libyaml-dev libxrender1 fonts-dejavu \
     libfreetype6-dev libpng-dev net-tools procps libreadline-dev wget software-properties-common octave \
+    libgl1-mesa-glx \
     # IHaskell dependencies
     zlib1g-dev libtinfo-dev libcairo2-dev libpango1.0-dev && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -52,9 +53,26 @@ RUN conda config --add channels conda-forge && \
     scijava-jupyter-kernel \
     # ansible
     ansible-kernel \
-    ##fortran_kernel \
-    cython patsy statsmodels cloudpickle dill tensorflow r-xml && conda clean -yt && \
+    # fortran_kernel \
+    cython patsy statsmodels cloudpickle dill tensorflow r-xml \
+    # pyiron
+    pyiron lammps gpaw sphinxdft nglview seaborn ovito && conda clean -yt && \
     pip install --no-cache-dir bioblend galaxy-ie-helpers
+
+# ngl view for jupyter lab
+RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
+    jupyter labextension install nglview-js-widgets
+
+# pyiron setup
+RUN echo "[DEFAULT]\nTOP_LEVEL_DIRS = ${HOME}\nRESOURCE_PATHS = ${HOME}/resources" > ${HOME}/.pyiron && \
+    git clone https://github.com/pyiron/pyiron-resources.git ${HOME}/resources
+
+# gpaw setup
+RUN mkdir -p ${HOME}/resources/gpaw && \
+    wget https://wiki.fysik.dtu.dk/gpaw-files/gpaw-setups-0.9.20000.tar.gz && \
+    tar -xf gpaw-setups-0.9.20000.tar.gz && \
+    mv gpaw-setups-0.9.20000 ${HOME}/resources/gpaw/potentials && \
+    rm gpaw-setups-0.9.20000.tar.gz
 
 # IRuby
 #RUN iruby register
