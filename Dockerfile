@@ -64,8 +64,7 @@ RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build 
     jupyter labextension install nglview-js-widgets
 
 # pyiron setup
-RUN echo "[DEFAULT]\nTOP_LEVEL_DIRS = ${HOME}\nRESOURCE_PATHS = ${HOME}/resources" > ${HOME}/.pyiron && \
-    git clone https://github.com/pyiron/pyiron-resources.git ${HOME}/resources
+RUN git clone https://github.com/pyiron/pyiron-resources.git ${HOME}/resources
 
 # gpaw setup
 RUN mkdir -p ${HOME}/resources/gpaw && \
