@@ -56,16 +56,15 @@ RUN conda config --add channels conda-forge && \
     # fortran_kernel \
     cython patsy statsmodels cloudpickle dill tensorflow r-xml \
     # pyiron
-    pyiron=0.2.9 lammps gpaw sphinxdft nglview seaborn ovito && conda clean -yt && \
+    pyiron=0.2.9 lammps gpaw sphinxdft nglview=2.7.1 seaborn ovito && conda clean -yt && \
     pip install --no-cache-dir bioblend galaxy-ie-helpers
 
 # ngl view for jupyter lab
 RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
-    jupyter labextension install nglview-js-widgets
+    jupyter labextension install nglview-js-widgets@2.7.1
 
 # pyiron setup
-RUN echo "[DEFAULT]\nTOP_LEVEL_DIRS = ${HOME}\nRESOURCE_PATHS = ${HOME}/resources" > ${HOME}/.pyiron && \
-    git clone https://github.com/pyiron/pyiron-resources.git ${HOME}/resources
+RUN git clone https://github.com/pyiron/pyiron-resources.git ${HOME}/resources
 
 # gpaw setup
 RUN mkdir -p ${HOME}/resources/gpaw && \
