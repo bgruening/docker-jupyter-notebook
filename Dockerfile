@@ -64,7 +64,10 @@ RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build 
     jupyter labextension install nglview-js-widgets@2.7.1
 
 # pyiron setup
-RUN git clone https://github.com/pyiron/pyiron-resources.git ${HOME}/resources
+RUN git clone https://github.com/pyiron/pyiron-resources.git ${HOME}/resources && \
+    git clone https://github.com/pyiron/pyiron.git ${HOME}/code && \
+    mv ${HOME}/code/notebooks ${HOME}/examples && \
+    rm -rf ${HOME}/code/
 
 # gpaw setup
 RUN mkdir -p ${HOME}/resources/gpaw && \
