@@ -56,7 +56,7 @@ RUN conda config --add channels conda-forge && \
     # fortran_kernel \
     cython patsy statsmodels cloudpickle dill tensorflow r-xml \
     # pyiron
-    pyiron lammps gpaw sphinxdft nglview seaborn ovito && conda clean -yt && \
+    pyiron=0.2.9 lammps gpaw sphinxdft nglview seaborn ovito && conda clean -yt && \
     pip install --no-cache-dir bioblend galaxy-ie-helpers
 
 # ngl view for jupyter lab
