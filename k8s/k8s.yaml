@@ -1,0 +1,87 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {app_name}
+    release: "1.0.0"
+    env: {env}
+  name: {app_name}
+  namespace: {ns}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {app_name}
+      release: "1.0.0"
+      env: {env} 
+  strategy:
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 50%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {app_name}
+        release: "1.0.0"
+        env: {env}
+    spec:
+      containers:
+      - image: {image}
+        imagePullPolicy: Always
+        name: {app_name}
+        ports:
+        - containerPort: 8888
+        resources:
+            requests:
+              memory: "50Mi"
+              cpu: "100m"
+            limits:
+              memory: "100Mi"
+              cpu: "200m"
+        terminationMessagePath: /{env}/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      nodeSelector:
+        env: {nodename}
+        platform: apps
+      tolerations:
+      - key: "platform"
+        operator: "Equal"
+        value: "apps"
+        effect: "NoSchedule"
+      - key: "env"
+        operator: "Equal"
+        value: {nodename}
+        effect: "NoSchedule"
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {app_name}
+    env: {env}
+    release: "1.0.0"
+  name: {app_name}
+  namespace: {ns}
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - name: http
+    port: 8888
+    protocol: TCP
+    targetPort: 8888
+  selector:
+    app: {app_name}
+    env: {env}
+    release: "1.0.0"
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
