@@ -1,6 +1,6 @@
 k8spythonpipeline {
 
-     BUILD_TOOL = 'npm'
+     BUILD_TOOL = 'maven'
 
      developmentServer = 'DEV'
 
