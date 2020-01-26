@@ -2,7 +2,7 @@
 
 FROM jupyter/datascience-notebook:82d1d0bf0867
 
-MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
+MAINTAINER ananthraj tag.ananthraj@gmail.com
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -100,6 +100,8 @@ COPY jupyter_notebook_config.py /home/$NB_USER/.jupyter/
 ADD ./custom.js /home/$NB_USER/.jupyter/custom/custom.js
 ADD ./custom.css /home/$NB_USER/.jupyter/custom/custom.css
 ADD ./default_notebook.ipynb /home/$NB_USER/notebook.ipynb
+ADD ./ForecastingModel.ipynb /home/$NB_USER/ForecastingModel.ipynb
+ADD ./top_technician_agg.csv /home/$NB_USER/top_technician_agg.csv
 
 # ENV variables to replace conf file
 ENV DEBUG=false \
