@@ -23,7 +23,7 @@ USER jovyan
 # Python packages
 RUN conda config --add channels conda-forge && \
     conda install --yes --quiet \
-    pyiron=0.2.17 lammps gpaw sphinxdft nglview=2.7.7 && conda clean -yt
+    pyiron=0.2.17 lammps gpaw sphinxdft nglview=2.7.7 requests-toolbelt boto && conda clean -yt
 
 RUN pip install --no-cache-dir bioblend galaxy-ie-helpers
 
