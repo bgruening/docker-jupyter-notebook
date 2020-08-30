@@ -10,12 +10,7 @@ ENV DEBIAN_FRONTEND noninteractive
 USER root
 
 RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libxml2-dev \
-    apt-transport-https python-dev libc-dev pandoc pkg-config liblzma-dev libbz2-dev libpcre3-dev \
-    build-essential libblas-dev liblapack-dev gfortran libzmq3-dev libyaml-dev libxrender1 fonts-dejavu \
-    libfreetype6-dev libpng-dev net-tools procps libreadline-dev wget software-properties-common octave \
-    libgl1-mesa-glx \
-    # IHaskell dependencies
-    zlib1g-dev libtinfo-dev libcairo2-dev libpango1.0-dev && \
+    apt-transport-https python-dev libc-dev pandoc && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 USER jovyan
@@ -23,9 +18,8 @@ USER jovyan
 # Python packages
 RUN conda config --add channels conda-forge && \
     conda install --yes --quiet \
-    pyiron=0.2.17 lammps gpaw sphinxdft nglview=2.7.7 requests-toolbelt boto && conda clean -yt
-
-RUN pip install --no-cache-dir bioblend galaxy-ie-helpers
+    pyiron=0.2.17 lammps gpaw sphinxdft nglview=2.7.7 requests-toolbelt boto && conda clean -yt && \
+    pip install --no-cache-dir bioblend galaxy-ie-helpers
 
 # ngl view for jupyter lab
 RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
