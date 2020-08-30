@@ -22,9 +22,7 @@ USER jovyan
 
 # Python packages
 RUN conda config --add channels conda-forge && \
-    conda config --add channels bioconda && \
     conda install --yes --quiet \
-    bioblend galaxy-ie-helpers \
     pyiron=0.2.17 lammps gpaw sphinxdft nglview=2.7.7 && conda clean -yt
 
 # ngl view for jupyter lab
