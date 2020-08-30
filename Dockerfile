@@ -1,6 +1,6 @@
 # Jupyter container used for Galaxy IPython (+other kernels) Integration
 
-FROM jupyter/datascience-notebook:82d1d0bf0867
+FROM jupyter/datascience-notebook:6d42503c684f
 
 MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
@@ -56,8 +56,7 @@ RUN conda config --add channels conda-forge && \
     # fortran_kernel \
     cython patsy statsmodels cloudpickle dill tensorflow r-xml \
     # pyiron
-    pyiron=0.2.17 lammps gpaw sphinxdft nglview=2.7.7 seaborn ovito && conda clean -yt && \
-    pip install --no-cache-dir bioblend galaxy-ie-helpers
+    pyiron=0.2.17 lammps gpaw sphinxdft nglview=2.7.7 seaborn bioblend galaxy-ie-helpers && conda clean -yt
 
 # ngl view for jupyter lab
 RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
