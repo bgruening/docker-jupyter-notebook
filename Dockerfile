@@ -1,6 +1,6 @@
 # Jupyter container used for Galaxy IPython (+other kernels) Integration
 
-FROM jupyter/datascience-notebook:6d42503c684f
+FROM jupyter/base-notebook:6d42503c684f
 
 MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
@@ -17,10 +17,8 @@ USER jovyan
 
 # Python packages
 RUN conda config --add channels conda-forge && \
-    conda config --add channels bioconda && \
     conda install --yes --quiet \
-    # pyiron
-    pyiron=0.2.17 lammps gpaw sphinxdft nglview=2.7.7 seaborn && conda clean -yt && \
+    pyiron=0.2.17 lammps gpaw sphinxdft nglview=2.7.7 requests-toolbelt boto && conda clean -yt && \
     pip install --no-cache-dir bioblend galaxy-ie-helpers
 
 # ngl view for jupyter lab
