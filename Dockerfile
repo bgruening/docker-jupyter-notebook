@@ -1,6 +1,6 @@
 # Jupyter container used for Galaxy IPython (+other kernels) Integration
 
-FROM jupyter/datascience-notebook:6d42503c684f
+FROM jupyter/base-notebook:6d42503c684f
 
 MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
