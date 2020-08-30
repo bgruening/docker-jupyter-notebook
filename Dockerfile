@@ -25,6 +25,8 @@ RUN conda config --add channels conda-forge && \
     conda install --yes --quiet \
     pyiron=0.2.17 lammps gpaw sphinxdft nglview=2.7.7 && conda clean -yt
 
+RUN pip install --no-cache-dir bioblend galaxy-ie-helpers
+
 # ngl view for jupyter lab
 RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
     jupyter labextension install nglview-js-widgets@2.7.7
