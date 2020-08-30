@@ -56,25 +56,17 @@ RUN conda config --add channels conda-forge && \
     # fortran_kernel \
     cython patsy statsmodels cloudpickle dill tensorflow r-xml \
     # pyiron
-    pyiron=0.2.9 lammps gpaw sphinxdft nglview=2.7.1 seaborn ovito && conda clean -yt && \
+    pyiron=0.2.17 lammps gpaw sphinxdft nglview=2.7.7 seaborn ovito && conda clean -yt && \
     pip install --no-cache-dir bioblend galaxy-ie-helpers
 
 # ngl view for jupyter lab
 RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
-    jupyter labextension install nglview-js-widgets@2.7.1
+    jupyter labextension install nglview-js-widgets@2.7.7
 
 # pyiron setup
-RUN git clone https://github.com/pyiron/pyiron-resources.git ${HOME}/resources && \
-    git clone https://github.com/pyiron/pyiron.git ${HOME}/code && \
+RUN git clone https://github.com/pyiron/pyiron.git ${HOME}/code && \
     mv ${HOME}/code/notebooks ${HOME}/examples && \
     rm -rf ${HOME}/code/
-
-# gpaw setup
-RUN mkdir -p ${HOME}/resources/gpaw && \
-    wget https://wiki.fysik.dtu.dk/gpaw-files/gpaw-setups-0.9.20000.tar.gz && \
-    tar -xf gpaw-setups-0.9.20000.tar.gz && \
-    mv gpaw-setups-0.9.20000 ${HOME}/resources/gpaw/potentials && \
-    rm gpaw-setups-0.9.20000.tar.gz
 
 # IRuby
 #RUN iruby register
