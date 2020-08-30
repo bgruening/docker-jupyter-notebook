@@ -20,7 +20,7 @@ RUN conda config --add channels conda-forge && \
     conda config --add channels bioconda && \
     conda install --yes --quiet \
     # pyiron
-    pyiron=0.2.17 lammps gpaw sphinxdft nglview seaborn ovito && conda clean -yt && \
+    pyiron=0.2.17 lammps gpaw sphinxdft nglview=2.7.7 seaborn ovito && conda clean -yt && \
     pip install --no-cache-dir bioblend galaxy-ie-helpers
 
 # ngl view for jupyter lab
