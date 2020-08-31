@@ -11,6 +11,7 @@ USER root
 
 RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libxml2-dev \
     apt-transport-https python-dev libc-dev pandoc && \
+    mkdir -p ${HOME}/examples && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 USER jovyan
