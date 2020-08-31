@@ -63,7 +63,8 @@ ENV DEBUG=false \
     API_KEY=none \
     HISTORY_ID=none \
     REMOTE_HOST=none \
-    GALAXY_URL=none
+    GALAXY_URL=none \
+    CONDA_PREFIX=$CONDA_DIR
 
 RUN mkdir /export/ && chown -R $NB_USER:users /home/$NB_USER/ /import /export/
 
