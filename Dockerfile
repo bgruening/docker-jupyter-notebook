@@ -26,9 +26,9 @@ RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build 
     jupyter labextension install nglview-js-widgets@2.7.7
 
 # pyiron setup
-RUN git clone https://github.com/pyiron/pyiron.git ${HOME}/code && \
-    mv ${HOME}/code/notebooks ${HOME}/examples && \
-    rm -rf ${HOME}/code/
+COPY galaxytools.py ${HOME}/examples
+COPY first_steps.ipynb ${HOME}/examples
+COPY submit-to-galaxy.ipynb ${HOME}/examples
 
 ADD ./startup.sh /startup.sh
 ADD ./monitor_traffic.sh /monitor_traffic.sh
