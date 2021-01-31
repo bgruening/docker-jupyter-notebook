@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/bgruening/docker-jupyter-notebook.svg?branch=master)](https://travis-ci.org/bgruening/docker-jupyter-notebook)
+[![Build Status](https://travis-ci.com/bgruening/docker-jupyter-notebook.svg?branch=master)](https://travis-ci.com/bgruening/docker-jupyter-notebook)
 [![Docker Repository on Quay](https://quay.io/repository/bgruening/docker-jupyter-notebook/status "Docker Repository on Quay")](https://quay.io/repository/bgruening/docker-jupyter-notebook)
 [![DOI](https://zenodo.org/badge/5466/bgruening/docker-jupyter-notebook.svg)](https://zenodo.org/badge/latestdoi/5466/bgruening/docker-jupyter-notebook)
 [![Manuscript](https://img.shields.io/badge/DOI-10.1371/journal.pcbi.1005425-blue.svg)](https://doi.org/10.1371/journal.pcbi.1005425)
