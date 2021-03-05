@@ -13,14 +13,14 @@ RUN conda config --add channels conda-forge && \
     conda install --yes --quiet \
     biopython \
     rpy2 \
-    #bash_kernel \
+    bash_kernel \
     #octave_kernel \
     # Scala
     #spylon-kernel \
     # Java
     #scijava-jupyter-kernel \
     # ansible
-    #ansible-kernel \
+    ansible-kernel \
     bioblend galaxy-ie-helpers \
     cython patsy statsmodels cloudpickle dill r-xml && conda clean -yt
 
