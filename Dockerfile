@@ -28,9 +28,13 @@ ADD ./startup.sh /startup.sh
 #ADD ./monitor_traffic.sh /monitor_traffic.sh
 ADD ./get_notebook.py /get_notebook.py
 
+USER root
+
 # /import will be the universal mount-point for Jupyter
 # The Galaxy instance can copy in data that needs to be present to the Jupyter webserver
 RUN mkdir /import
+
+USER jovyan
 
 # We can get away with just creating this single file and Jupyter will create the rest of the
 # profile for us.
