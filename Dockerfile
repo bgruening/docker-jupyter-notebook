@@ -13,19 +13,19 @@ RUN conda config --add channels conda-forge && \
     conda install --yes --quiet \
     biopython \
     rpy2 \
-    bash_kernel \
-    octave_kernel \
+    #bash_kernel \
+    #octave_kernel \
     # Scala
-    spylon-kernel \
+    #spylon-kernel \
     # Java
-    scijava-jupyter-kernel \
+    #scijava-jupyter-kernel \
     # ansible
-    ansible-kernel \
+    #ansible-kernel \
     bioblend galaxy-ie-helpers \
-    cython patsy statsmodels cloudpickle dill tensorflow r-xml && conda clean -yt
+    cython patsy statsmodels cloudpickle dill r-xml && conda clean -yt
 
 ADD ./startup.sh /startup.sh
-ADD ./monitor_traffic.sh /monitor_traffic.sh
+#ADD ./monitor_traffic.sh /monitor_traffic.sh
 ADD ./get_notebook.py /get_notebook.py
 
 USER root
