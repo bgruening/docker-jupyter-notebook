@@ -60,7 +60,9 @@ ENV DEBUG=false \
     REMOTE_HOST=none \
     GALAXY_URL=none
 
+USER root
 RUN mkdir /export/ && chown -R $NB_USER:users /home/$NB_USER/ /import /export/
+USER jovyan
 
 WORKDIR /import
 
