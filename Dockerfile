@@ -28,14 +28,6 @@ ADD ./startup.sh /startup.sh
 #ADD ./monitor_traffic.sh /monitor_traffic.sh
 ADD ./get_notebook.py /get_notebook.py
 
-USER root
-
-# /import will be the universal mount-point for Jupyter
-# The Galaxy instance can copy in data that needs to be present to the Jupyter webserver
-RUN mkdir /import
-
-USER jovyan
-
 # We can get away with just creating this single file and Jupyter will create the rest of the
 # profile for us.
 RUN mkdir -p /home/$NB_USER/.ipython/profile_default/startup/
@@ -61,7 +53,14 @@ ENV DEBUG=false \
     GALAXY_URL=none
 
 USER root
-RUN mkdir /export/ && chown -R $NB_USER:users /home/$NB_USER/ /import /export/
+
+# /import will be the universal mount-point for Jupyter
+# The Galaxy instance can copy in data that needs to be present to the Jupyter webserver
+RUN mkdir -p /import/jupyter/outputs/ && \
+    mkdir -p /import/jupyter/data && \
+    mkdir /export/ && \
+    chown -R $NB_USER:users /home/$NB_USER/ /import /export/
+
 USER jovyan
 
 WORKDIR /import
