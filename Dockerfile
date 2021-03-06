@@ -22,7 +22,10 @@ RUN conda config --add channels conda-forge && \
     # ansible
     ansible-kernel \
     bioblend galaxy-ie-helpers \
-    cython patsy statsmodels cloudpickle dill r-xml && conda clean -yt
+    # Jupyter widgets
+    jupyterlab-git jupytext \
+    cython patsy statsmodels cloudpickle dill r-xml && conda clean -yt && \
+    pip install jupyterlab_hdf
 
 ADD ./startup.sh /startup.sh
 #ADD ./monitor_traffic.sh /monitor_traffic.sh
@@ -51,6 +54,10 @@ ENV DEBUG=false \
     HISTORY_ID=none \
     REMOTE_HOST=none \
     GALAXY_URL=none
+
+RUN jupyter labextension install @jupyterlab/geojson-extension @jupyterlab/toc-extension @jupyterlab/katex-extension @jupyterlab/fasta-extension @jupyterlab/git
+
+# @jupyterlab/google-drive  not yet supported
 
 USER root
 
