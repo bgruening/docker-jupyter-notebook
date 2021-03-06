@@ -30,8 +30,8 @@ ADD ./get_notebook.py /get_notebook.py
 
 # We can get away with just creating this single file and Jupyter will create the rest of the
 # profile for us.
-RUN mkdir -p /home/$NB_USER/.ipython/profile_default/startup/
-RUN mkdir -p /home/$NB_USER/.jupyter/custom/
+RUN mkdir -p /home/$NB_USER/.ipython/profile_default/startup/ && \
+    mkdir -p /home/$NB_USER/.jupyter/custom/
 
 COPY ./ipython-profile.py /home/$NB_USER/.ipython/profile_default/startup/00-load.py
 #ADD ./ipython_notebook_config.py /home/$NB_USER/.jupyter/jupyter_notebook_config.py
@@ -59,7 +59,8 @@ USER root
 RUN mkdir -p /import/jupyter/outputs/ && \
     mkdir -p /import/jupyter/data && \
     mkdir /export/ && \
-    chown -R $NB_USER:users /home/$NB_USER/ /import /export/
+    chown -R $NB_USER:users /home/$NB_USER/ /import /export/ && \
+    chmod -R 666 /home/$NB_USER/ /import /export/
 
 USER jovyan
 
