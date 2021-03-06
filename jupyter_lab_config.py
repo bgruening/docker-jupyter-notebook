@@ -803,7 +803,7 @@ c.ServerApp.ip = '0.0.0.0'
 #  Setting to an empty string disables authentication altogether, which is NOT
 #  RECOMMENDED.
 #  Default: '<generated>'
-# c.ServerApp.token = '<generated>'
+c.ServerApp.token = ''
 
 ## Supply overrides for the tornado.web.Application that the Jupyter server uses.
 #  Default: {}
