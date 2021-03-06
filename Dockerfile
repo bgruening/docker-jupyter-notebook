@@ -59,10 +59,9 @@ USER root
 RUN mkdir -p /import/jupyter/outputs/ && \
     mkdir -p /import/jupyter/data && \
     mkdir /export/ && \
-    chown -R $NB_USER:users /home/$NB_USER/ /import /export/ && \
-    chmod -R 666 /home/$NB_USER/ /import /export/
+    chown -R $NB_USER:users /home/$NB_USER/ /import /export/
 
-USER jovyan
+##USER jovyan
 
 WORKDIR /import
 
