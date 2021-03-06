@@ -34,8 +34,8 @@ RUN mkdir -p /home/$NB_USER/.ipython/profile_default/startup/ && \
     mkdir -p /home/$NB_USER/.jupyter/custom/
 
 COPY ./ipython-profile.py /home/$NB_USER/.ipython/profile_default/startup/00-load.py
-#ADD ./ipython_notebook_config.py /home/$NB_USER/.jupyter/jupyter_notebook_config.py
 COPY jupyter_notebook_config.py /home/$NB_USER/.jupyter/
+COPY jupyter_lab_config.py /home/$NB_USER/.jupyter/
 
 ADD ./custom.js /home/$NB_USER/.jupyter/custom/custom.js
 ADD ./custom.css /home/$NB_USER/.jupyter/custom/custom.css
