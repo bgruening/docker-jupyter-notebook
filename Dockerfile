@@ -55,7 +55,7 @@ ENV DEBUG=false \
     REMOTE_HOST=none \
     GALAXY_URL=none
 
-RUN jupyter labextension install @jupyterlab/geojson-extension @jupyterlab/toc-extension @jupyterlab/katex-extension @jupyterlab/fasta-extension @jupyterlab/git
+RUN jupyter labextension install @jupyterlab/geojson-extension @jupyterlab/toc-extension @jupyterlab/katex-extension @jupyterlab/fasta-extension
 
 # @jupyterlab/google-drive  not yet supported
 
