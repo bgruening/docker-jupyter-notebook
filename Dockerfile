@@ -23,7 +23,7 @@ RUN conda config --add channels conda-forge && \
     ansible-kernel \
     bioblend galaxy-ie-helpers \
     # Jupyter widgets
-    jupyterlab-git jupytext \
+    jupytext \
     cython patsy statsmodels cloudpickle dill r-xml && conda clean -yt && \
     pip install jupyterlab_hdf
 
