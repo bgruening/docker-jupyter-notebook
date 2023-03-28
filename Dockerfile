@@ -1,7 +1,7 @@
 # Jupyter container used for Galaxy IPython (+other kernels) Integration
 
 # from 5th March 2021
-FROM jupyter/datascience-notebook:julia-1.8.5
+FROM jupyter/datascience-notebook:python-3.10
 
 MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
