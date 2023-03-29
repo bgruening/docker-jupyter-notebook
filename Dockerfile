@@ -55,7 +55,7 @@ ENV DEBUG=false \
     REMOTE_HOST=none \
     GALAXY_URL=none
 
-RUN jupyter labextension install @jupyterlab/geojson-extension
+RUN conda install jupyterlab-geojson
 RUN jupyter labextension install @jupyterlab/toc-extension
 RUN jupyter labextension install @jupyterlab/katex-extension
 RUN jupyter labextension install @jupyterlab/fasta-extension
