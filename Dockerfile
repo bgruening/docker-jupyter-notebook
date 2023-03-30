@@ -55,9 +55,9 @@ ENV DEBUG=false \
     REMOTE_HOST=none \
     GALAXY_URL=none
 
-RUN conda install jupyterlab-geojson
-RUN conda install jupyterlab-katex
-RUN conda install jupyterlab-fasta
+RUN conda install jupyterlab-geojson && \
+    conda install jupyterlab-katex && \
+    conda install jupyterlab-fasta
 
 # @jupyterlab/google-drive  not yet supported
 
