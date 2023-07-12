@@ -1,31 +1,50 @@
 # Jupyter container used for Galaxy IPython (+other kernels) Integration
 
-# from 5th March 2021
+# from June 2023
 FROM jupyter/datascience-notebook:python-3.10
 
 MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Python packages
+# Set channels to (defaults) > bioconda > conda-forge
 RUN conda config --add channels conda-forge && \
-    conda config --add channels bioconda && \
+    conda config --add channels bioconda
+    #conda config --add channels defaults
+
+# Pre-installed mamba is raising a conda error:
+# "The environment is inconsistent"
+RUN conda remove mamba --yes
+
+# Install python and jupyter packages
+RUN conda update -n base -c conda-forge conda && \
+    conda update --yes --all && \
     conda install --yes --quiet \
-    biopython \
-    rpy2 \
-    bash_kernel \
-    #octave_kernel \
-    # Scala
-    #spylon-kernel \
-    # Java
-    #scijava-jupyter-kernel \
-    # ansible
-    ansible-kernel \
-    bioblend galaxy-ie-helpers \
-    # Jupyter widgets
-    jupytext \
-    cython patsy statsmodels cloudpickle dill r-xml && conda clean -yt && \
-    pip install jupyterlab_hdf
+        ansible-kernel \
+        bash_kernel \
+        bioblend galaxy-ie-helpers \
+        biopython \
+        cloudpickle \
+        cython \
+        dill \
+        # octave_kernel \
+        # Scala
+        # spylon-kernel \
+        # Java
+        # scijava-jupyter-kernel \
+        jupytext \
+        jupyterlab-geojson \
+        jupyterlab-katex \
+        jupyterlab-fasta \
+        mamba \
+        patsy \
+        r-xml \
+        rpy2 \
+        statsmodels && \
+    conda clean --all -y
+
+RUN pip install jupyterlab_hdf && \
+    rm -r ~/.cache/pip
 
 ADD ./startup.sh /startup.sh
 #ADD ./monitor_traffic.sh /monitor_traffic.sh
@@ -55,9 +74,6 @@ ENV DEBUG=false \
     REMOTE_HOST=none \
     GALAXY_URL=none
 
-RUN conda install jupyterlab-geojson && \
-    conda install jupyterlab-katex && \
-    conda install jupyterlab-fasta
 
 # @jupyterlab/google-drive  not yet supported
 
