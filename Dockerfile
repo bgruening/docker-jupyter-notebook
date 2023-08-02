@@ -38,6 +38,7 @@ RUN conda update -n base -c conda-forge conda && \
         jupyterlab-fasta \
         mamba \
         patsy \
+        pip \
         r-xml \
         rpy2 \
         statsmodels && \
