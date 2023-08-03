@@ -11,12 +11,12 @@ headers = {
     'X-Frame-Options': 'ALLOWALL',
     'Content-Security-Policy':
         "; ".join([
-            "default-src 'self' https: %(CORS_ORIGIN)s",
-            "img-src 'self' data: %(CORS_ORIGIN)s",
-            "connect-src 'self' %(WS_CORS_ORIGIN)s",
-            "style-src 'unsafe-inline' 'self' %(CORS_ORIGIN)s",
-            "script-src https: 'unsafe-inline' 'unsafe-eval' 'self' %(CORS_ORIGIN)s"
-        ]) % {'CORS_ORIGIN': CORS_ORIGIN, 'WS_CORS_ORIGIN': 'ws://%s' % CORS_ORIGIN_HOSTNAME}
+            f"default-src 'self' https: {CORS_ORIGIN}",
+            f"img-src 'self' data: {CORS_ORIGIN}",
+            f"connect-src 'self' ws://{CORS_ORIGIN_HOSTNAME}",
+            f"style-src 'unsafe-inline' 'self' {CORS_ORIGIN}",
+            f"script-src https: 'unsafe-inline' 'unsafe-eval' 'self' {CORS_ORIGIN}"
+        ])
 }
 
 # Configuration file for jupyter-notebook.
