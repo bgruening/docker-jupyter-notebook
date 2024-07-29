@@ -1,25 +1,21 @@
 # Jupyter container used for Galaxy IPython (+other kernels) Integration
 
-# from June 2023
-FROM jupyter/datascience-notebook:python-3.10
+FROM jupyter/datascience-notebook:python-3.11
 
 MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Set channels to (defaults) > bioconda > conda-forge
-RUN conda config --add channels conda-forge && \
-    conda config --add channels bioconda
-    #conda config --add channels defaults
-
-# Pre-installed mamba is raising a conda error:
-# "The environment is inconsistent"
-RUN conda remove mamba --yes
+# Set channels to bioconda > conda-forge
+RUN conda config --add channels bioconda && \
+    conda config --add channels conda-forge && \
+    conda config --set channel_priority strict && \
+    conda --version
 
 # Install python and jupyter packages
-RUN conda update -n base -c conda-forge conda && \
-    conda update --yes --all && \
-    conda install --yes --quiet \
+#RUN conda update conda  --yes
+##&& \ ###--quiet \
+RUN conda install --yes \ 
         ansible-kernel \
         bash_kernel \
         bioblend galaxy-ie-helpers \
@@ -36,7 +32,6 @@ RUN conda update -n base -c conda-forge conda && \
         jupyterlab-geojson \
         jupyterlab-katex \
         jupyterlab-fasta \
-        mamba \
         patsy \
         pip \
         r-xml \
