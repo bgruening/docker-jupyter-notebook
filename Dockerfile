@@ -1,6 +1,10 @@
 # Jupyter container used for Galaxy IPython (+other kernels) Integration
 
-FROM jupyter/datascience-notebook:python-3.11
+# We want to support Python, R, Julia, Bash and to a lesser degree ansible, octave
+# https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html
+# Accoring to the link above we should take scipy-notebook and add additional kernels.
+# Since Julia installation seems to be complicated we will take the Julia notebook as base and install separate kernels into separate envs
+FROM quay.io/jupyter/julia-notebook:python-3.11
 
 MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
@@ -13,34 +17,48 @@ RUN conda config --add channels bioconda && \
     conda --version
 
 # Install python and jupyter packages
-#RUN conda update conda  --yes
-##&& \ ###--quiet \
 RUN conda install --yes \ 
-        ansible-kernel \
-        bash_kernel \
-        bioblend galaxy-ie-helpers \
-        biopython \
-        cloudpickle \
-        cython \
-        dill \
-        # octave_kernel \
-        # Scala
-        # spylon-kernel \
-        # Java
-        # scijava-jupyter-kernel \
-        jupytext \
-        jupyterlab-geojson \
-        jupyterlab-katex \
-        jupyterlab-fasta \
-        patsy \
-        pip \
-        r-xml \
-        rpy2 \
-        statsmodels && \
+    bioblend galaxy-ie-helpers \
+    biopython \
+    cloudpickle \
+    cython \
+    dill \
+    # https://github.com/anaconda/nb_conda_kernels
+    nb_conda_kernels \
+    jupytext \
+    jupyterlab-geojson \
+    jupyterlab-katex \
+    jupyterlab-fasta \
+    patsy \
+    pip \
+    statsmodels && \
     conda clean --all -y
 
-RUN pip install jupyterlab_hdf && \
-    rm -r ~/.cache/pip
+RUN conda create -n ansible-kernel --yes ansible-kernel && \
+    conda create -n bash-kernel --yes bash_kernel && \
+    conda create -n octave-kernel --yes octave_kernel  && \
+    conda create -n python-kernel-3.12 --yes python=3.12 ipykernel  && \
+    conda create -n rlang-kernel --yes r-base r-irkernel r-xml rpy2 \
+        'r-caret' \
+        'r-crayon' \
+        'r-devtools' \
+        'r-e1071' \
+        'r-forecast' \
+        'r-hexbin' \
+        'r-htmltools' \
+        'r-htmlwidgets' \
+        'r-irkernel' \
+        'r-nycflights13' \
+        'r-randomforest' \
+        'r-rcurl' \
+        'r-rmarkdown' \
+        'r-rodbc' \
+        'r-rsqlite' \
+        'r-shiny' \
+        'r-tidymodels' \
+        'r-tidyverse' \
+        'unixodbc' && \
+    conda clean --all -y
 
 ADD ./startup.sh /startup.sh
 #ADD ./monitor_traffic.sh /monitor_traffic.sh
@@ -70,16 +88,22 @@ ENV DEBUG=false \
     REMOTE_HOST=none \
     GALAXY_URL=none
 
-
 # @jupyterlab/google-drive  not yet supported
 
 USER root
 
-RUN apt-get -qq update && \
-    apt-get install -y net-tools procps && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# R pre-requisites
+RUN apt-get update --yes && \
+    apt-get install --yes --no-install-recommends \
+    fonts-dejavu \
+    unixodbc \
+    unixodbc-dev \
+    r-cran-rodbc \
+    gfortran \
+    net-tools \
+    procps \
+    gcc && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # /import will be the universal mount-point for Jupyter
 # The Galaxy instance can copy in data that needs to be present to the Jupyter webserver
