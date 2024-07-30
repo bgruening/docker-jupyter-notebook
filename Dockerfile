@@ -32,9 +32,10 @@ RUN conda install --yes \
     patsy \
     pip \
     statsmodels && \
-    conda clean --all -y
-
-RUN conda create -n ansible-kernel --yes ansible-kernel && \
+    ##
+    ## Now create separate environments, that are managed by nb_conda_kernels
+    ##
+    conda create -n ansible-kernel --yes ansible-kernel && \
     conda create -n bash-kernel --yes bash_kernel && \
     conda create -n octave-kernel --yes octave_kernel  && \
     conda create -n python-kernel-3.12 --yes python=3.12 ipykernel  && \
@@ -58,7 +59,8 @@ RUN conda create -n ansible-kernel --yes ansible-kernel && \
         'r-tidymodels' \
         'r-tidyverse' \
         'unixodbc' && \
-    conda clean --all -y
+    conda clean --all -y && \
+    chmod a+w+r /opt/conda/ -R
 
 ADD ./startup.sh /startup.sh
 #ADD ./monitor_traffic.sh /monitor_traffic.sh
