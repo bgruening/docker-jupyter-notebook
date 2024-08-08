@@ -71,9 +71,9 @@ ADD ./get_notebook.py /get_notebook.py
 RUN mkdir -p /home/$NB_USER/.ipython/profile_default/startup/ && \
     mkdir -p /home/$NB_USER/.jupyter/custom/
 
-COPY ./ipython-profile.py /home/$NB_USER/.ipython/profile_default/startup/00-load.py
-COPY jupyter_notebook_config.py /home/$NB_USER/.jupyter/
-COPY jupyter_lab_config.py /home/$NB_USER/.jupyter/
+ADD ./ipython-profile.py /home/$NB_USER/.ipython/profile_default/startup/00-load.py
+ADD jupyter_notebook_config.py /home/$NB_USER/.jupyter/
+ADD jupyter_lab_config.py /home/$NB_USER/.jupyter/
 
 ADD ./custom.js /home/$NB_USER/.jupyter/custom/custom.js
 ADD ./custom.css /home/$NB_USER/.jupyter/custom/custom.css
@@ -112,7 +112,8 @@ RUN apt-get update --yes && \
 RUN mkdir -p /import/jupyter/outputs/ && \
     mkdir -p /import/jupyter/data && \
     mkdir /export/ && \
-    chown -R $NB_USER:users /home/$NB_USER/ /import /export/
+    chown -R $NB_USER:users /home/$NB_USER/ /import /export/ && \
+    chmod -R 777 /home/$NB_USER/ /import /export/
 
 ##USER jovyan
 
