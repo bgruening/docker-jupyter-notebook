@@ -35,11 +35,11 @@ RUN conda install --yes \
     ##
     ## Now create separate environments, that are managed by nb_conda_kernels
     ##
-    conda create -n ansible-kernel --yes ansible-kernel && \
-    conda create -n bash-kernel --yes bash_kernel && \
-    conda create -n octave-kernel --yes octave_kernel  && \
-    conda create -n python-kernel-3.12 --yes python=3.12 ipykernel  && \
-    conda create -n rlang-kernel --yes r-base r-irkernel r-xml rpy2 \
+    conda create -n ansible-kernel --yes ansible-kernel bioblend galaxy-ie-helpers && \
+    conda create -n bash-kernel --yes bash_kernel bioblend galaxy-ie-helpers && \
+    conda create -n octave-kernel --yes octave_kernel bioblend galaxy-ie-helpers  && \
+    conda create -n python-kernel-3.12 --yes python=3.12 ipykernel bioblend galaxy-ie-helpers  && \
+    conda create -n rlang-kernel --yes r-base r-irkernel r-xml rpy2 bioblend galaxy-ie-helpers \
         'r-caret' \
         'r-crayon' \
         'r-devtools' \
