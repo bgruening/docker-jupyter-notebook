@@ -4,7 +4,7 @@
 # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html
 # Accoring to the link above we should take scipy-notebook and add additional kernels.
 # Since Julia installation seems to be complicated we will take the Julia notebook as base and install separate kernels into separate envs
-FROM quay.io/jupyter/julia-notebook:python-3.11
+FROM quay.io/jupyter/julia-notebook:python-3.12
 
 MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
 
