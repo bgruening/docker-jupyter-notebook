@@ -35,30 +35,45 @@ RUN conda install --yes \
     ##
     ## Now create separate environments, that are managed by nb_conda_kernels
     ##
-    conda create -n ansible-kernel --yes ansible-kernel bioblend galaxy-ie-helpers && \
-    conda create -n bash-kernel --yes bash_kernel bioblend galaxy-ie-helpers && \
-    conda create -n octave-kernel --yes octave_kernel bioblend galaxy-ie-helpers  && \
-    conda create -n python-kernel-3.12 --yes python=3.12 ipykernel bioblend galaxy-ie-helpers  && \
-    conda create -n rlang-kernel --yes r-base r-irkernel r-xml rpy2 bioblend galaxy-ie-helpers \
-        'r-caret' \
-        'r-crayon' \
-        'r-devtools' \
-        'r-e1071' \
-        'r-forecast' \
-        'r-hexbin' \
-        'r-htmltools' \
-        'r-htmlwidgets' \
-        'r-irkernel' \
-        'r-nycflights13' \
-        'r-randomforest' \
-        'r-rcurl' \
-        'r-rmarkdown' \
-        'r-rodbc' \
-        'r-rsqlite' \
-        'r-shiny' \
-        'r-tidymodels' \
-        'r-tidyverse' \
-        'unixodbc' && \
+    conda create -n ansible-kernel --yes && \
+    conda run -n ansible-kernel pip install ipykernel bioblend galaxy-ie-helpers && \
+    conda run -n ansible-kernel python -m ipykernel install --user --name ansible-kernel --display-name "Ansible Kernel" && \
+
+    conda create -n bash-kernel --yes && \
+    conda run -n bash-kernel pip install bash_kernel bioblend galaxy-ie-helpers && \
+    conda run -n bash-kernel python -m ipykernel install --user --name bash-kernel --display-name "bash" && \
+
+    conda create -n octave-kernel --yes && \
+    conda run -n octave-kernel pip install octave-kernel bioblend galaxy-ie-helpers && \
+    conda run -n octave-kernel python -m ipykernel install --user --name octave-kernel --display-name "Octave" && \
+
+    conda create -n python-kernel-3.12 --yes python=3.12 ipykernel && \
+    conda run -n python-kernel-3.12 pip install bioblend galaxy-ie-helpers && \
+    conda run -n python-kernel-3.12 python -m ipykernel install --user --name python-kernel-3.12 --display-name "Python 3.12" && \
+    
+    conda create -n rlang-kernel --yes r-base r-irkernel r-xml rpy2 \
+    	    'r-caret' \
+	    'r-crayon' \
+	    'r-devtools' \
+	    'r-e1071' \
+	    'r-forecast' \
+	    'r-hexbin' \
+	    'r-htmltools' \
+	    'r-htmlwidgets' \
+	    'r-irkernel' \
+	    'r-nycflights13' \
+	    'r-randomforest' \
+	    'r-rcurl' \
+	    'r-rmarkdown' \
+	    'r-rodbc' \
+	    'r-rsqlite' \
+	    'r-shiny' \
+	    'r-tidymodels' \
+	    'r-tidyverse' \
+	    'unixodbc' && \
+    conda run -n rlang-kernel pip install bioblend galaxy-ie-helpers && \
+    conda run -n rlang-kernel R -e 'IRkernel::installspec(user = TRUE)' && \
+
     conda clean --all -y && \
     chmod a+w+r /opt/conda/ -R
 
