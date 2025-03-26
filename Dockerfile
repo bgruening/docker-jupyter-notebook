@@ -1,7 +1,5 @@
 # Jupyter container used for Galaxy IPython (+other kernels) Integration
 
-# Jupyter container used for Galaxy IPython (+other kernels) Integration
-
 # We want to support Python, R, Julia, Bash and to a lesser degree ansible, octave
 # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html
 # Accoring to the link above we should take scipy-notebook and add additional kernels.
@@ -134,4 +132,4 @@ RUN mkdir -p /import/jupyter/outputs/ && \
 WORKDIR /import
 
 # Start Jupyter Notebook
-CMD /startup.sh 
+CMD /startup.sh
