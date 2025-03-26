@@ -60,7 +60,7 @@ RUN conda install --yes \
     conda run -n rlang-kernel R -e 'IRkernel::installspec(user = TRUE)' && \
     conda create -n bash-kernel --yes bash_kernel bioblend galaxy-ie-helpers && \
     conda run -n bash-kernel python -m bash_kernel.install --user && \
-    UN conda create -n octave-kernel python=3.8 --yes && \
+    conda create -n octave-kernel python=3.8 --yes && \
     conda run -n octave-kernel pip install octave_kernel bioblend galaxy-ie-helpers && \
     conda run -n octave-kernel python -m octave_kernel install --user&& \
     conda create -n ansible-kernel --yes ansible-kernel jupyter_client bioblend galaxy-ie-helpers && \
