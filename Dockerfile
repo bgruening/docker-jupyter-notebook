@@ -1,4 +1,4 @@
- # Jupyter container used for Galaxy IPython (+other kernels) Integration
+# Jupyter container used for Galaxy IPython (+other kernels) Integration
 
 # We want to support Python, R, Julia, Bash and to a lesser degree ansible, octave
 # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html
