@@ -73,6 +73,9 @@ RUN conda create -n octave-kernel python=3.8 --yes && \
 RUN conda create -n ansible-kernel --yes ansible-kernel jupyter_client bioblend galaxy-ie-helpers && \
     conda run -n ansible-kernel python -m ansible_kernel.install
 
+RUN conda clean --all -y && \
+    chmod a+w+r /opt/conda/ -R
+
 ADD ./startup.sh /startup.sh
 #ADD ./monitor_traffic.sh /monitor_traffic.sh
 ADD ./get_notebook.py /get_notebook.py
