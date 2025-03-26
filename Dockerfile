@@ -1,4 +1,4 @@
-# Jupyter container used for Galaxy IPython (+other kernels) Integration
+ # Jupyter container used for Galaxy IPython (+other kernels) Integration
 
 # We want to support Python, R, Julia, Bash and to a lesser degree ansible, octave
 # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html
@@ -17,7 +17,7 @@ RUN conda config --add channels bioconda && \
     conda --version
 
 # Install python and jupyter packages
-RUN conda install --yes \ 
+RUN conda install --yes \
     bioblend galaxy-ie-helpers \
     biopython \
     cloudpickle \
@@ -31,15 +31,13 @@ RUN conda install --yes \
     jupyterlab-fasta \
     patsy \
     pip \
-    statsmodels 
+    statsmodels && \
     ##
     ## Now create separate environments, that are managed by nb_conda_kernels
     ##
- 
-RUN conda create -n python-kernel-3.12 --yes python=3.12 ipykernel bioblend galaxy-ie-helpers && \
-    conda run -n python-kernel-3.12 python -m ipykernel install --user --name python-kernel-3.12 --display-name "Python 3.12" 
-    
-RUN conda create -n rlang-kernel --yes r-base r-irkernel r-xml rpy2 bioblend galaxy-ie-helpers \
+    conda create -n python-kernel-3.12 --yes python=3.12 ipykernel bioblend galaxy-ie-helpers && \
+    conda run -n python-kernel-3.12 python -m ipykernel install --user --name python-kernel-3.12 --display-name "Python 3.12" && \
+    conda create -n rlang-kernel --yes r-base r-irkernel r-xml rpy2 bioblend galaxy-ie-helpers \
     	    'r-caret' \
 	    'r-crayon' \
 	    'r-devtools' \
@@ -59,20 +57,18 @@ RUN conda create -n rlang-kernel --yes r-base r-irkernel r-xml rpy2 bioblend gal
 	    'r-tidymodels' \
 	    'r-tidyverse' \
 	    'unixodbc' && \
-    conda run -n rlang-kernel R -e 'IRkernel::installspec(user = TRUE)' 
-
-RUN conda create -n bash-kernel --yes bash_kernel bioblend galaxy-ie-helpers && \
-    conda run -n bash-kernel python -m bash_kernel.install --user 
-
-RUN conda create -n octave-kernel python=3.8 --yes && \
+    conda run -n rlang-kernel R -e 'IRkernel::installspec(user = TRUE)' && \
+    conda create -n bash-kernel --yes bash_kernel bioblend galaxy-ie-helpers && \
+    conda run -n bash-kernel python -m bash_kernel.install --user && \
+    UN conda create -n octave-kernel python=3.8 --yes && \
     conda run -n octave-kernel pip install octave_kernel bioblend galaxy-ie-helpers && \
-    conda run -n octave-kernel python -m octave_kernel install --user
-
-RUN conda create -n ansible-kernel --yes ansible-kernel jupyter_client bioblend galaxy-ie-helpers && \
-    conda run -n ansible-kernel python -m ansible_kernel.install
-
-RUN conda clean --all -y && \
+    conda run -n octave-kernel python -m octave_kernel install --user&& \
+    conda create -n ansible-kernel --yes ansible-kernel jupyter_client bioblend galaxy-ie-helpers && \
+    conda run -n ansible-kernel python -m ansible_kernel.install && \
+    conda clean --all -y && \
     chmod a+w+r /opt/conda/ -R
+
+    
 
 ADD ./startup.sh /startup.sh
 #ADD ./monitor_traffic.sh /monitor_traffic.sh
