@@ -17,7 +17,7 @@ RUN conda config --add channels bioconda && \
     conda --version
 
 # Install python and jupyter packages
-RUN conda install --yes \
+RUN conda install --yes \ 
     bioblend galaxy-ie-helpers \
     biopython \
     cloudpickle \
