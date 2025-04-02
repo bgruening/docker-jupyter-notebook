@@ -68,7 +68,9 @@ RUN conda install --yes \
     conda clean --all -y && \
     chmod a+w+r /opt/conda/ -R
 
-    
+RUN echo 'Sys.setenv(CONDA_PREFIX = "/opt/conda/envs/rlang-kernel")' >> /home/$NB_USER/.Rprofile && \
+    echo 'Sys.setenv(PATH = paste("/opt/conda/envs/rlang-kernel/bin", Sys.getenv("PATH"), sep=":"))' >> /home/$NB_USER/.Rprofile && \
+    chown $NB_USER /home/$NB_USER/.Rprofile
 
 ADD ./startup.sh /startup.sh
 #ADD ./monitor_traffic.sh /monitor_traffic.sh
