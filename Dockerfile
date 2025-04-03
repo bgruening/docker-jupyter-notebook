@@ -6,7 +6,7 @@
 # Since Julia installation seems to be complicated we will take the Julia notebook as base and install separate kernels into separate envs
 FROM quay.io/jupyter/julia-notebook:python-3.12
 
-MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
+LABEL org.opencontainers.image.authors="Björn A. Grüning, bjoern.gruening@gmail.com"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
