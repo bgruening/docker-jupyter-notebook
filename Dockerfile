@@ -35,32 +35,42 @@ RUN conda install --yes \
     ##
     ## Now create separate environments, that are managed by nb_conda_kernels
     ##
-    conda create -n ansible-kernel --yes ansible-kernel bioblend galaxy-ie-helpers && \
-    conda create -n bash-kernel --yes bash_kernel bioblend galaxy-ie-helpers && \
-    conda create -n octave-kernel --yes octave_kernel bioblend galaxy-ie-helpers  && \
-    conda create -n python-kernel-3.12 --yes python=3.12 ipykernel bioblend galaxy-ie-helpers  && \
+    conda create -n python-kernel-3.12 --yes python=3.12 ipykernel bioblend galaxy-ie-helpers && \
+    conda run -n python-kernel-3.12 python -m ipykernel install --user --name python-kernel-3.12 --display-name "Python 3.12" && \
     conda create -n rlang-kernel --yes r-base r-irkernel r-xml rpy2 bioblend galaxy-ie-helpers \
-        'r-caret' \
-        'r-crayon' \
-        'r-devtools' \
-        'r-e1071' \
-        'r-forecast' \
-        'r-hexbin' \
-        'r-htmltools' \
-        'r-htmlwidgets' \
-        'r-irkernel' \
-        'r-nycflights13' \
-        'r-randomforest' \
-        'r-rcurl' \
-        'r-rmarkdown' \
-        'r-rodbc' \
-        'r-rsqlite' \
-        'r-shiny' \
-        'r-tidymodels' \
-        'r-tidyverse' \
-        'unixodbc' && \
+    	    'r-caret' \
+	    'r-crayon' \
+	    'r-devtools' \
+	    'r-e1071' \
+	    'r-forecast' \
+	    'r-hexbin' \
+	    'r-htmltools' \
+	    'r-htmlwidgets' \
+	    'r-irkernel' \
+	    'r-nycflights13' \
+	    'r-randomforest' \
+	    'r-rcurl' \
+	    'r-rmarkdown' \
+	    'r-rodbc' \
+	    'r-rsqlite' \
+	    'r-shiny' \
+	    'r-tidymodels' \
+	    'r-tidyverse' \
+	    'unixodbc' && \
+    conda run -n rlang-kernel R -e 'IRkernel::installspec(user = TRUE)' && \
+    conda create -n bash-kernel --yes bash_kernel bioblend galaxy-ie-helpers && \
+    conda run -n bash-kernel python -m bash_kernel.install --user && \
+    conda create -n octave-kernel python=3.8 --yes && \
+    conda run -n octave-kernel pip install octave_kernel bioblend galaxy-ie-helpers && \
+    conda run -n octave-kernel python -m octave_kernel install --user&& \
+    conda create -n ansible-kernel --yes ansible-kernel jupyter_client bioblend galaxy-ie-helpers && \
+    conda run -n ansible-kernel python -m ansible_kernel.install && \
     conda clean --all -y && \
     chmod a+w+r /opt/conda/ -R
+
+RUN echo 'Sys.setenv(CONDA_PREFIX = "/opt/conda/envs/rlang-kernel")' >> /home/$NB_USER/.Rprofile && \
+    echo 'Sys.setenv(PATH = paste("/opt/conda/envs/rlang-kernel/bin", Sys.getenv("PATH"), sep=":"))' >> /home/$NB_USER/.Rprofile && \
+    chown $NB_USER /home/$NB_USER/.Rprofile
 
 ADD ./startup.sh /startup.sh
 #ADD ./monitor_traffic.sh /monitor_traffic.sh
