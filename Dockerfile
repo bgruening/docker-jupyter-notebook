@@ -23,8 +23,6 @@ RUN conda install --yes \
     cloudpickle \
     cython \
     dill \
-    # https://github.com/anaconda/nb_conda_kernels
-    nb_conda_kernels \
     jupytext \
     jupyterlab-geojson \
     jupyterlab-katex \
@@ -32,12 +30,13 @@ RUN conda install --yes \
     patsy \
     pip \
     statsmodels && \
-    ##
-    ## Now create separate environments, that are managed by nb_conda_kernels
-    ##
-    conda create -n python-kernel-3.12 --yes python=3.12 ipykernel bioblend galaxy-ie-helpers && \
-    conda run -n python-kernel-3.12 python -m ipykernel install --user --name python-kernel-3.12 --display-name "Python 3.12" && \
-    conda create -n rlang-kernel --yes r-base r-irkernel r-xml rpy2 bioblend galaxy-ie-helpers \
+    conda create -n bash-kernel --yes bash_kernel=0.10.0 bioblend galaxy-ie-helpers && \
+    conda run -n bash-kernel python -m bash_kernel.install --user && \
+    conda create -n ansible-kernel --yes ansible-kernel=1.0.0 jupyter_client bioblend galaxy-ie-helpers && \
+    conda run -n ansible-kernel python -m ansible_kernel.install && \
+    conda create -n octave-kernel --yes python=3.8 octave_kernel=0.36.0 bioblend galaxy-ie-helpers && \
+    conda run -n octave-kernel python -m octave_kernel install --user && \
+    conda create -n rlang-kernel --yes r-base r-irkernel=1.3.2 r-xml rpy2 bioblend galaxy-ie-helpers \
     	    'r-caret' \
 	    'r-crayon' \
 	    'r-devtools' \
@@ -57,14 +56,7 @@ RUN conda install --yes \
 	    'r-tidymodels' \
 	    'r-tidyverse' \
 	    'unixodbc' && \
-    conda run -n rlang-kernel R -e 'IRkernel::installspec(user = TRUE)' && \
-    conda create -n bash-kernel --yes bash_kernel bioblend galaxy-ie-helpers && \
-    conda run -n bash-kernel python -m bash_kernel.install --user && \
-    conda create -n octave-kernel python=3.8 --yes && \
-    conda run -n octave-kernel pip install octave_kernel bioblend galaxy-ie-helpers && \
-    conda run -n octave-kernel python -m octave_kernel install --user&& \
-    conda create -n ansible-kernel --yes ansible-kernel jupyter_client bioblend galaxy-ie-helpers && \
-    conda run -n ansible-kernel python -m ansible_kernel.install && \
+    conda run -n rlang-kernel R -e "IRkernel::installspec(user = TRUE, name = 'rlang-kernel', displayname = 'R')" && \
     conda clean --all -y && \
     chmod a+w+r /opt/conda/ -R
 
