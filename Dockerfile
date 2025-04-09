@@ -62,6 +62,7 @@ RUN conda install --yes \
 
 RUN echo 'Sys.setenv(CONDA_PREFIX = "/opt/conda/envs/rlang-kernel")' >> /home/$NB_USER/.Rprofile && \
     echo 'Sys.setenv(PATH = paste("/opt/conda/envs/rlang-kernel/bin", Sys.getenv("PATH"), sep=":"))' >> /home/$NB_USER/.Rprofile && \
+    echo 'Sys.setenv(PROJ_LIB = "/opt/conda/envs/rlang-kernel/share/proj")' >> /home/$NB_USER/.Rprofile && \
     chown $NB_USER /home/$NB_USER/.Rprofile
 
 ADD ./startup.sh /startup.sh
