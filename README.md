@@ -1,8 +1,6 @@
-[![Build Status](https://travis-ci.com/bgruening/docker-jupyter-notebook.svg?branch=master)](https://travis-ci.com/bgruening/docker-jupyter-notebook)
-[![Docker Repository on Quay](https://quay.io/repository/bgruening/docker-jupyter-notebook/status "Docker Repository on Quay")](https://quay.io/repository/bgruening/docker-jupyter-notebook)
+[![Docker Repository on Quay](https://quay.io/repository/galaxy/docker-jupyter-notebook/status "Docker Repository on Quay")](https://quay.io/repository/bgruening/docker-jupyter-notebook)
 [![DOI](https://zenodo.org/badge/5466/bgruening/docker-jupyter-notebook.svg)](https://zenodo.org/badge/latestdoi/5466/bgruening/docker-jupyter-notebook)
 [![Manuscript](https://img.shields.io/badge/DOI-10.1371/journal.pcbi.1005425-blue.svg)](https://doi.org/10.1371/journal.pcbi.1005425)
-
 
 
 Docker Jupyter Container
@@ -12,7 +10,7 @@ Docker Jupyter Container
 This [Jupyter](http://jupyter.org/) Docker container is used by the [Galaxy Project](https://galaxyproject.org/) and can be installed from the [docker.io index](https://registry.hub.docker.com/u/bgruening/docker-jupyter-notebook/).
 
 ```bash
-docker pull bgruening/docker-jupyter-notebook
+docker pull quay.io/galaxy/docker-jupyter-notebook
 ```
 
 Usage
@@ -32,7 +30,7 @@ Usage
 
 * Run a pre-build image from docker registry
 
- ``docker run -p 7777:8888 bgruening/docker-jupyter-notebook ``  
+ ``docker run -p 7777:8888 quay.io/galaxy/docker-jupyter-notebook:25.04 ``  
 
 
 Environment Variables
