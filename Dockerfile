@@ -23,8 +23,6 @@ RUN conda install --yes \
     cloudpickle \
     cython \
     dill \
-    # https://github.com/anaconda/nb_conda_kernels
-    nb_conda_kernels \
     jupytext \
     jupyterlab-geojson \
     jupyterlab-katex \
@@ -32,35 +30,40 @@ RUN conda install --yes \
     patsy \
     pip \
     statsmodels && \
-    ##
-    ## Now create separate environments, that are managed by nb_conda_kernels
-    ##
-    conda create -n ansible-kernel --yes ansible-kernel bioblend galaxy-ie-helpers && \
-    conda create -n bash-kernel --yes bash_kernel bioblend galaxy-ie-helpers && \
-    conda create -n octave-kernel --yes octave_kernel bioblend galaxy-ie-helpers  && \
-    conda create -n python-kernel-3.12 --yes python=3.12 ipykernel bioblend galaxy-ie-helpers  && \
-    conda create -n rlang-kernel --yes r-base r-irkernel r-xml rpy2 bioblend galaxy-ie-helpers \
-        'r-caret' \
-        'r-crayon' \
-        'r-devtools' \
-        'r-e1071' \
-        'r-forecast' \
-        'r-hexbin' \
-        'r-htmltools' \
-        'r-htmlwidgets' \
-        'r-irkernel' \
-        'r-nycflights13' \
-        'r-randomforest' \
-        'r-rcurl' \
-        'r-rmarkdown' \
-        'r-rodbc' \
-        'r-rsqlite' \
-        'r-shiny' \
-        'r-tidymodels' \
-        'r-tidyverse' \
-        'unixodbc' && \
+    conda create -n bash-kernel --yes bash_kernel=0.10.0 bioblend galaxy-ie-helpers && \
+    conda run -n bash-kernel python -m bash_kernel.install --user && \
+    conda create -n ansible-kernel --yes ansible-kernel=1.0.0 jupyter_client bioblend galaxy-ie-helpers && \
+    conda run -n ansible-kernel python -m ansible_kernel.install && \
+    conda create -n octave-kernel --yes python=3.8 octave_kernel=0.36.0 bioblend galaxy-ie-helpers && \
+    conda run -n octave-kernel python -m octave_kernel install --user && \
+    conda create -n rlang-kernel --yes r-base r-irkernel=1.3.2 r-xml rpy2 bioblend galaxy-ie-helpers \
+    	    'r-caret' \
+	    'r-crayon' \
+	    'r-devtools' \
+	    'r-e1071' \
+	    'r-forecast' \
+	    'r-hexbin' \
+	    'r-htmltools' \
+	    'r-htmlwidgets' \
+	    'r-irkernel' \
+	    'r-nycflights13' \
+	    'r-randomforest' \
+	    'r-rcurl' \
+	    'r-rmarkdown' \
+	    'r-rodbc' \
+	    'r-rsqlite' \
+	    'r-shiny' \
+	    'r-tidymodels' \
+	    'r-tidyverse' \
+	    'unixodbc' && \
+    conda run -n rlang-kernel R -e "IRkernel::installspec(user = TRUE, name = 'rlang-kernel', displayname = 'R')" && \
     conda clean --all -y && \
     chmod a+w+r /opt/conda/ -R
+
+RUN echo 'Sys.setenv(CONDA_PREFIX = "/opt/conda/envs/rlang-kernel")' >> /home/$NB_USER/.Rprofile && \
+    echo 'Sys.setenv(PATH = paste("/opt/conda/envs/rlang-kernel/bin", Sys.getenv("PATH"), sep=":"))' >> /home/$NB_USER/.Rprofile && \
+    echo 'Sys.setenv(PROJ_LIB = "/opt/conda/envs/rlang-kernel/share/proj")' >> /home/$NB_USER/.Rprofile && \
+    chown $NB_USER /home/$NB_USER/.Rprofile
 
 ADD ./startup.sh /startup.sh
 #ADD ./monitor_traffic.sh /monitor_traffic.sh
