@@ -97,7 +97,7 @@ ENV DEBUG=false \
 
 USER root
 
-# R pre-requisites
+# R pre-requisites and system packages
 RUN apt-get update --yes && \
     apt-get install --yes --no-install-recommends \
     fonts-dejavu \
@@ -107,7 +107,8 @@ RUN apt-get update --yes && \
     gfortran \
     net-tools \
     procps \
-    gcc && \
+    gcc \
+	libegl-mesa0 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # /import will be the universal mount-point for Jupyter
