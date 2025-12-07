@@ -13,6 +13,7 @@ headers = {
         "; ".join([
             f"default-src 'self' https: {CORS_ORIGIN}",
             f"img-src 'self' data: {CORS_ORIGIN}",
+            f"media-src 'self' data: {CORS_ORIGIN}",
             f"connect-src 'self' ws://{CORS_ORIGIN_HOSTNAME}",
             f"style-src 'unsafe-inline' 'self' {CORS_ORIGIN}",
             f"script-src https: 'unsafe-inline' 'unsafe-eval' 'self' {CORS_ORIGIN}"
