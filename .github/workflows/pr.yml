@@ -1,0 +1,30 @@
+name: PR
+
+on:
+  pull_request:
+    branches: [ "main", "master" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  initialise:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+          
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+   
+  build_only:
+    needs: initialise
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Build docker image
+        uses: docker/build-push-action@v4
+        with:
+          push: false
+          tags: user/app:latest

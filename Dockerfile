@@ -1,30 +1,74 @@
 # Jupyter container used for Galaxy IPython (+other kernels) Integration
 
-FROM jupyter/base-notebook:6d42503c684f
+# We want to support Python, R, Julia, Bash and to a lesser degree ansible, octave
+# https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html
+# Accoring to the link above we should take scipy-notebook and add additional kernels.
+# Since Julia installation seems to be complicated we will take the Julia notebook as base and install separate kernels into separate envs
+FROM quay.io/jupyter/julia-notebook:python-3.12
 
-MAINTAINER Björn A. Grüning, bjoern.gruening@gmail.com
+LABEL org.opencontainers.image.authors="Björn A. Grüning, bjoern.gruening@gmail.com"
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system libraries first as root
-USER root
+# Set channels to bioconda > conda-forge
+RUN conda config --add channels bioconda && \
+    conda config --add channels conda-forge && \
+    conda config --set channel_priority strict && \
+    conda --version
 
-RUN apt-get -qq update && apt-get install --no-install-recommends -y libcurl4-openssl-dev libxml2-dev \
-    apt-transport-https python-dev libc-dev pandoc && \
-    mkdir -p ${HOME}/examples && \
-    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Install python and jupyter packages
+RUN conda install --yes \ 
+    bioblend galaxy-ie-helpers \
+    biopython \
+    cloudpickle \
+    cython \
+    dill \
+    jupytext \
+    jupyterlab-geojson \
+    jupyterlab-katex \
+    jupyterlab-fasta \
+    patsy \
+    pip \
+    statsmodels && \
+    conda create -n bash-kernel --yes bash_kernel=0.10.0 bioblend galaxy-ie-helpers && \
+    conda run -n bash-kernel python -m bash_kernel.install --user && \
+    conda create -n ansible-kernel --yes ansible-kernel=1.0.0 jupyter_client bioblend galaxy-ie-helpers && \
+    conda run -n ansible-kernel python -m ansible_kernel.install && \
+    conda create -n octave-kernel --yes python=3.8 octave_kernel=0.36.0 bioblend galaxy-ie-helpers && \
+    conda run -n octave-kernel python -m octave_kernel install --user && \
+    conda create -n rlang-kernel --yes r-base r-irkernel=1.3.2 r-xml rpy2 bioblend galaxy-ie-helpers \
+    	    'r-caret' \
+	    'r-crayon' \
+	    'r-devtools' \
+	    'r-e1071' \
+	    'r-forecast' \
+	    'r-hexbin' \
+	    'r-htmltools' \
+	    'r-htmlwidgets' \
+	    'r-irkernel' \
+	    'r-nycflights13' \
+	    'r-randomforest' \
+	    'r-rcurl' \
+	    'r-rmarkdown' \
+	    'r-rodbc' \
+	    'r-rsqlite' \
+	    'r-shiny' \
+	    'r-tidymodels' \
+	    'r-tidyverse' \
+	    'unixodbc' && \
+    conda run -n rlang-kernel R -e "IRkernel::installspec(user = TRUE, name = 'rlang-kernel', displayname = 'R')" && \
+    conda clean --all -y && \
+    chmod a+w+r /opt/conda/ -R
 
-USER jovyan
+RUN echo 'Sys.setenv(CONDA_PREFIX = "/opt/conda/envs/rlang-kernel")' >> /home/$NB_USER/.Rprofile && \
+    echo 'Sys.setenv(PATH = paste("/opt/conda/envs/rlang-kernel/bin", Sys.getenv("PATH"), sep=":"))' >> /home/$NB_USER/.Rprofile && \
+    echo 'Sys.setenv(PROJ_LIB = "/opt/conda/envs/rlang-kernel/share/proj")' >> /home/$NB_USER/.Rprofile && \
+    chown $NB_USER /home/$NB_USER/.Rprofile
 
 # Python packages
-RUN conda config --add channels conda-forge && \
-    conda install --yes --quiet \
-    pyiron=0.3.2 lammps gpaw sphinxdft nglview=2.7.7 requests-toolbelt boto git && conda clean -yt && \
+RUN conda install --yes --quiet \
+    pyiron_atomistics=0.8.12 lammps gpaw sphinxdft nglview=3.1.4 requests-toolbelt boto git && conda clean -yt && \
     pip install --no-cache-dir bioblend galaxy-ie-helpers
-
-# ngl view for jupyter lab
-RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
-    jupyter labextension install nglview-js-widgets@2.7.7
 
 # pyiron setup
 COPY galaxytools.py ${HOME}/examples
@@ -32,24 +76,17 @@ COPY first_steps.ipynb ${HOME}/examples
 COPY submit-to-galaxy.ipynb ${HOME}/examples
 
 ADD ./startup.sh /startup.sh
-ADD ./monitor_traffic.sh /monitor_traffic.sh
+#ADD ./monitor_traffic.sh /monitor_traffic.sh
 ADD ./get_notebook.py /get_notebook.py
-
-USER root
-
-# /import will be the universal mount-point for Jupyter
-# The Galaxy instance can copy in data that needs to be present to the Jupyter webserver
-RUN mkdir /import
-
 
 # We can get away with just creating this single file and Jupyter will create the rest of the
 # profile for us.
-RUN mkdir -p /home/$NB_USER/.ipython/profile_default/startup/
-RUN mkdir -p /home/$NB_USER/.jupyter/custom/
+RUN mkdir -p /home/$NB_USER/.ipython/profile_default/startup/ && \
+    mkdir -p /home/$NB_USER/.jupyter/custom/
 
-COPY ./ipython-profile.py /home/$NB_USER/.ipython/profile_default/startup/00-load.py
-#ADD ./ipython_notebook_config.py /home/$NB_USER/.jupyter/jupyter_notebook_config.py
-COPY jupyter_notebook_config.py /home/$NB_USER/.jupyter/
+ADD ./ipython-profile.py /home/$NB_USER/.ipython/profile_default/startup/00-load.py
+ADD jupyter_notebook_config.py /home/$NB_USER/.jupyter/
+ADD jupyter_lab_config.py /home/$NB_USER/.jupyter/
 
 ADD ./custom.js /home/$NB_USER/.jupyter/custom/custom.js
 ADD ./custom.css /home/$NB_USER/.jupyter/custom/custom.css
@@ -67,13 +104,35 @@ ENV DEBUG=false \
     GALAXY_URL=none \
     CONDA_PREFIX=$CONDA_DIR
 
-RUN mkdir /export/ && chown -R $NB_USER:users /home/$NB_USER/ /import /export/
+# @jupyterlab/google-drive  not yet supported
+
+USER root
+
+# R pre-requisites and system packages
+RUN apt-get update --yes && \
+    apt-get install --yes --no-install-recommends \
+    fonts-dejavu \
+    unixodbc \
+    unixodbc-dev \
+    r-cran-rodbc \
+    gfortran \
+    net-tools \
+    procps \
+    gcc \
+	libegl-mesa0 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# /import will be the universal mount-point for Jupyter
+# The Galaxy instance can copy in data that needs to be present to the Jupyter webserver
+RUN mkdir -p /import/jupyter/outputs/ && \
+    mkdir -p /import/jupyter/data && \
+    mkdir /export/ && \
+    chown -R $NB_USER:users /home/$NB_USER/ /import /export/ && \
+    chmod -R 777 /home/$NB_USER/ /import /export/
 
 ##USER jovyan
 
 WORKDIR /import
-
-# Jupyter will run on port 8888, export this port to the host system
 
 # Start Jupyter Notebook
 CMD /startup.sh
