@@ -21,7 +21,7 @@ RUN conda config --add channels bioconda && \
 # and includes the fixes for GHSA-354v-3q48-cv69 (CVE-2026-114135), GHSA-fcw5-x6j4-ccmp,
 # GHSA-5789-5fc7-67v3 and GHSA-24qx-w28j-9m6p; certifi brings current CA certificates.
 RUN conda install --yes \
-    'jupyter-server>=2.21.0' \
+    'jupyter_server>=2.21.1' \
     certifi \
     bioblend galaxy-ie-helpers \
     biopython \
