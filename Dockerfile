@@ -4,7 +4,7 @@
 # https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html
 # Accoring to the link above we should take scipy-notebook and add additional kernels.
 # Since Julia installation seems to be complicated we will take the Julia notebook as base and install separate kernels into separate envs
-FROM quay.io/jupyter/julia-notebook:python-3.12
+FROM quay.io/jupyter/julia-notebook:2026-11-02
 
 LABEL org.opencontainers.image.authors="Björn A. Grüning, bjoern.gruening@gmail.com"
 
@@ -17,7 +17,12 @@ RUN conda config --add channels bioconda && \
     conda --version
 
 # Install python and jupyter packages
-RUN conda install --yes \ 
+# jupyter-server>=2.21.0 fixes GHSA-c3mw-737p-c7g2 (CVE-2026-86049, token leak via Referer in 5xx logs)
+# and includes the fixes for GHSA-354v-3q48-cv69 (CVE-2026-114135), GHSA-fcw5-x6j4-ccmp,
+# GHSA-5789-5fc7-67v3 and GHSA-24qx-w28j-9m6p; certifi brings current CA certificates.
+RUN conda install --yes \
+    'jupyter-server>=2.21.0' \
+    certifi \
     bioblend galaxy-ie-helpers \
     biopython \
     cloudpickle \
